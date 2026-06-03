@@ -147,36 +147,43 @@ const StockScraper = {
         const rates = {};
         if (!symbols || symbols.length === 0) return rates;
 
-        try {
-            const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}`;
-            const rawText = await fetchWithProxy(url);
-            const json = JSON.parse(rawText);
-            const result = json?.quoteResponse?.result || [];
-            
-            result.forEach(stock => {
-                const sym = stock.symbol.toUpperCase();
-                rates[sym] = {
-                    symbol: sym,
-                    price: stock.regularMarketPrice || 0,
-                    changePercent: stock.regularMarketChangePercent || 0,
-                    prevClose: stock.regularMarketPreviousClose || 0,
-                    currency: stock.currency || "USD",
-                    name: stock.longName || stock.shortName || stock.symbol
-                };
-            });
-        } catch (e) {
-            console.error("Stock Scraper Error:", e);
-        }
+        const fetchPromises = symbols.map(async (symbol) => {
+            const symUpper = symbol.toUpperCase();
+            try {
+                const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symUpper)}?interval=1d&range=1d`;
+                const rawText = await fetchWithProxy(url);
+                const json = JSON.parse(rawText);
+                const meta = json?.chart?.result?.[0]?.meta;
+                if (meta) {
+                    const price = meta.regularMarketPrice || 0;
+                    const prevClose = meta.chartPreviousClose || price;
+                    const changePercent = prevClose > 0 ? ((price - prevClose) / prevClose) * 100 : 0;
+                    
+                    rates[symUpper] = {
+                        symbol: symUpper,
+                        price: price,
+                        changePercent: changePercent,
+                        prevClose: prevClose,
+                        currency: meta.currency || "USD",
+                        name: meta.longName || meta.shortName || symUpper
+                    };
+                }
+            } catch (e) {
+                console.error(`Error scraping stock ${symUpper}:`, e);
+            }
+        });
 
-        // Apply offline mock fallbacks for missing symbols
+        await Promise.all(fetchPromises);
+
+        // Apply offline mock fallbacks with accurate prices provided by the user
         const MOCK_STOCKS = {
-            "BBCA.JK": { symbol: "BBCA.JK", price: 10450, changePercent: -0.47, prevClose: 10500, currency: "IDR", name: "Bank Central Asia Tbk." },
+            "BBCA.JK": { symbol: "BBCA.JK", price: 5525, changePercent: -5.15, prevClose: 5825, currency: "IDR", name: "Bank Central Asia Tbk." },
             "BBNI.JK": { symbol: "BBNI.JK", price: 4780, changePercent: 1.27, prevClose: 4720, currency: "IDR", name: "Bank Negara Indonesia Tbk." },
-            "GOOG": { symbol: "GOOG", price: 175.50, changePercent: -0.28, prevClose: 176.00, currency: "USD", name: "Alphabet Inc." },
-            "MSFT": { symbol: "MSFT", price: 415.20, changePercent: 0.85, prevClose: 411.70, currency: "USD", name: "Microsoft Corporation" },
-            "AAPL": { symbol: "AAPL", price: 190.30, changePercent: 1.45, prevClose: 187.58, currency: "USD", name: "Apple Inc." },
-            "NVDA": { symbol: "NVDA", price: 1095.40, changePercent: 4.88, prevClose: 1044.40, currency: "USD", name: "NVIDIA Corporation" },
-            "WDC": { symbol: "WDC", price: 74.30, changePercent: -0.15, prevClose: 74.41, currency: "USD", name: "Western Digital Corp." },
+            "GOOG": { symbol: "GOOG", price: 358.39, changePercent: -3.81, prevClose: 372.58, currency: "USD", name: "Alphabet Inc." },
+            "MSFT": { symbol: "MSFT", price: 441.31, changePercent: 0.85, prevClose: 437.58, currency: "USD", name: "Microsoft Corporation" },
+            "AAPL": { symbol: "AAPL", price: 315.20, changePercent: 1.45, prevClose: 310.68, currency: "USD", name: "Apple Inc." },
+            "NVDA": { symbol: "NVDA", price: 222.82, changePercent: 4.88, prevClose: 212.45, currency: "USD", name: "NVIDIA Corporation" },
+            "WDC": { symbol: "WDC", price: 563.10, changePercent: -0.15, prevClose: 563.95, currency: "USD", name: "Western Digital Corp." },
             "SNDK": { symbol: "SNDK", price: 0, changePercent: 0, prevClose: 0, currency: "USD", name: "SanDisk Corp. (Delisted - Acquired by WDC)" }
         };
 
