@@ -1193,10 +1193,17 @@ function startAutoSync() {
 // App Initialization
 window.onload = () => {
     loadState();
+
+    // Check URL parameters for theme override
+    const params = new URLSearchParams(window.location.search);
+    const themeParam = params.get("theme");
+    if (themeParam) {
+        state.settings.themePreference = themeParam;
+    }
+
     applyTheme();
 
     // Check URL parameters for widget mode
-    const params = new URLSearchParams(window.location.search);
     const widgetParam = params.get("widget");
     if (widgetParam === "true" || widgetParam === "valas") {
         toggleWidgetMode(true, "valas");

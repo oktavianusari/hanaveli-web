@@ -40,12 +40,12 @@
 [data-theme="sunset"] {
     --primary-color: #ff9f43;
     --primary-rgb: 255, 159, 67;
-    --secondary-color: #2c3a59;
+    --secondary-color: #293556;
     --text-color: #ffffff;
-    --bg-color: #203362;
-    --card-bg: rgba(255, 255, 255, 0.06);
-    --card-border: rgba(255, 255, 255, 0.12);
-    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+    --bg-color: #1b2647;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     
     --green-up: #4cd137;
     --red-down: #ff7675;
@@ -710,11 +710,7 @@ body.widget-mode .app-container {
 }
 
 body.widget-mode .app-header {
-    padding-bottom: 6px;
-}
-
-body.widget-mode .logo-text h1 {
-    font-size: 16px;
+    display: none !important;
 }
 
 body.widget-mode .app-nav {
