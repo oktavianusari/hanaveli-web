@@ -9,6 +9,20 @@ const ALL_CURRENCIES = [
     "EUR", "SAR", "NZD", "CNY", "SEK", "THB", "RUB", "KRW", "MYR", "EMAS"
 ];
 
+const DEFAULT_STOCKS = ["BBCA.JK", "BBNI.JK", "GOOG", "MSFT", "AAPL", "NVDA", "WDC"];
+const ALL_STOCKS = ["BBCA.JK", "BBNI.JK", "GOOG", "MSFT", "AAPL", "NVDA", "WDC", "SNDK"];
+
+const STOCK_NAMES = {
+    "BBCA.JK": "Bank Central Asia Tbk.",
+    "BBNI.JK": "Bank Negara Indonesia Tbk.",
+    "GOOG": "Alphabet Inc. (Google)",
+    "MSFT": "Microsoft Corporation",
+    "AAPL": "Apple Inc.",
+    "NVDA": "NVIDIA Corporation",
+    "WDC": "Western Digital Corp.",
+    "SNDK": "SanDisk Corp. (Delisted - Acquired by WDC)"
+};
+
 const FLAG_EMOJIS = {
     USD: "🇺🇸", SGD: "🇸🇬", EUR: "🇪🇺", GBP: "🇬🇧", AUD: "🇦🇺", CAD: "🇨🇦",
     CHF: "🇨🇭", CNY: "🇨🇳", HKD: "🇭🇰", JPY: "🇯🇵", MYR: "🇲🇾", NZD: "🇳🇿",
@@ -40,20 +54,25 @@ const FALLBACK_RATES = {
 // Global State
 let state = {
     monitored: [],
+    monitoredStocks: [],
     transactions: [],
     settings: {
         rateType: "e-rate",
         rateDirection: "jual",
         emasRateDirection: "jual",
+        syncInterval: 15,
         themePreference: "system",
         customColors: { primary: "#386A20", secondary: "#D7E8CD", text: "#1A1C18" },
         language: "system"
     },
     rates: {},
+    stockRates: {},
     baseRatesToday: {}, // Used to store today's opening rates for daily change calculation
+    baseStockRatesToday: {},
     lastSyncDay: "",
     bcaLastUpdated: "",
-    pegadaianLastUpdated: ""
+    pegadaianLastUpdated: "",
+    stocksLastUpdated: ""
 };
 
 // Localization Translations
@@ -157,6 +176,14 @@ function getFlagHtml(code) {
     return `<img src="https://flagcdn.com/w40/${countryCode}.png" srcset="https://flagcdn.com/w80/${countryCode}.png 2x" width="24" height="18" alt="${code} flag" class="flag-img" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); margin-right: 4px; object-fit: cover;">`;
 }
 
+function getAssetFlagHtml(code) {
+    const codeUpper = code.toUpperCase();
+    if (ALL_STOCKS.includes(codeUpper)) {
+        return getStockFlagHtml(codeUpper);
+    }
+    return getFlagHtml(codeUpper);
+}
+
 // Local Storage Handlers
 function loadState() {
     try {
@@ -166,9 +193,19 @@ function loadState() {
             if (!state.settings.syncInterval) {
                 state.settings.syncInterval = 15;
             }
+            if (!state.monitoredStocks) {
+                state.monitoredStocks = [...DEFAULT_STOCKS];
+            }
+            if (!state.stockRates) {
+                state.stockRates = {};
+            }
+            if (!state.baseStockRatesToday) {
+                state.baseStockRatesToday = {};
+            }
         } else {
             // Seed defaults
             state.monitored = [...DEFAULT_MONITORED];
+            state.monitoredStocks = [...DEFAULT_STOCKS];
             state.transactions = [];
             state.settings = {
                 rateType: "e-rate",
@@ -180,7 +217,9 @@ function loadState() {
                 language: "system"
             };
             state.rates = { ...FALLBACK_RATES };
+            state.stockRates = {};
             state.baseRatesToday = {};
+            state.baseStockRatesToday = {};
             ALL_CURRENCIES.forEach(c => {
                 const isJual = c === "EMAS" ? state.settings.emasRateDirection === "jual" : state.settings.rateDirection === "jual";
                 state.baseRatesToday[c] = isJual ? FALLBACK_RATES[c].eRateSell : FALLBACK_RATES[c].eRateBuy;
@@ -285,6 +324,91 @@ function calculatePortfolio() {
     return results;
 }
 
+function calculateStockPortfolio() {
+    const data = {};
+    const sortedTrx = [...state.transactions].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    state.monitoredStocks.forEach(symbol => {
+        const symUpper = symbol.toUpperCase();
+        const info = state.stockRates[symUpper] || { price: 0, currency: symUpper.endsWith(".JK") ? "IDR" : "USD", name: STOCK_NAMES[symUpper] || symUpper };
+        data[symUpper] = {
+            symbol: symUpper,
+            balance: 0,
+            totalCost: 0,
+            realizedGain: 0,
+            currentRate: info.price || 0,
+            currency: info.currency || (symUpper.endsWith(".JK") ? "IDR" : "USD"),
+            name: info.name || symbol
+        };
+    });
+
+    sortedTrx.forEach(t => {
+        const symUpper = t.currency.toUpperCase();
+        if (ALL_STOCKS.includes(symUpper)) {
+            if (!data[symUpper]) {
+                const info = state.stockRates[symUpper] || { price: 0, currency: symUpper.endsWith(".JK") ? "IDR" : "USD", name: STOCK_NAMES[symUpper] || symUpper };
+                data[symUpper] = {
+                    symbol: symUpper,
+                    balance: 0,
+                    totalCost: 0,
+                    realizedGain: 0,
+                    currentRate: info.price || 0,
+                    currency: info.currency || (symUpper.endsWith(".JK") ? "IDR" : "USD"),
+                    name: info.name || t.currency
+                };
+            }
+
+            const d = data[symUpper];
+            if (t.type === "BUY") {
+                d.balance += t.amount;
+                d.totalCost += t.amount * t.rate;
+            } else if (t.type === "SELL") {
+                const averageCost = d.balance > 0 ? d.totalCost / d.balance : 0;
+                d.realizedGain += (t.rate - averageCost) * t.amount;
+                d.balance -= t.amount;
+                d.totalCost -= t.amount * averageCost;
+            }
+        }
+    });
+
+    const results = [];
+    state.monitoredStocks.forEach(symbol => {
+        const symUpper = symbol.toUpperCase();
+        const d = data[symUpper];
+        const info = state.stockRates[symUpper] || {};
+        const dailyChangePercent = info.changePercent !== undefined ? info.changePercent : 0;
+
+        const unrealizedGain = d.currentRate > 0 ? (d.balance * d.currentRate) - d.totalCost : 0;
+        const totalGain = d.realizedGain + unrealizedGain;
+        const averageBuyPrice = d.balance > 0 ? d.totalCost / d.balance : 0;
+
+        results.push({
+            ...d,
+            dailyChangePercent,
+            unrealizedGain,
+            totalGain,
+            averageBuyPrice
+        });
+    });
+
+    return results;
+}
+
+function updateHeaderTitle() {
+    const headerH1 = document.querySelector(".app-header .logo-text h1");
+    if (!headerH1) return;
+
+    const isWidgetStock = document.body.classList.contains("widget-saham");
+    const activeTabBtn = document.querySelector(".nav-tab.active");
+    const isTabStock = activeTabBtn && activeTabBtn.dataset.tab === "saham";
+
+    if (isWidgetStock || isTabStock) {
+        headerH1.innerText = "Monitor Saham";
+    } else {
+        headerH1.innerText = "Monitor Valas";
+    }
+}
+
 // UI Views Render
 function renderMonitorTab() {
     const container = document.getElementById("currency-list");
@@ -367,6 +491,105 @@ function renderMonitorTab() {
     // Update banner
     document.getElementById("bca-time").innerText = state.bcaLastUpdated.replace(/BCA\s*:?/i, "").trim() || "-";
     document.getElementById("indogold-time").innerText = state.pegadaianLastUpdated.replace(/IndoGold\s*:?/i, "").trim() || "-";
+    updateHeaderTitle();
+}
+
+function getStockFlagHtml(symbol) {
+    const country = symbol.toUpperCase().endsWith(".JK") ? "id" : "us";
+    return `<img src="https://flagcdn.com/w40/${country}.png" srcset="https://flagcdn.com/w80/${country}.png 2x" width="24" height="18" alt="${symbol} flag" class="flag-img" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); margin-right: 4px; object-fit: cover;">`;
+}
+
+function renderStockTab() {
+    const container = document.getElementById("stock-list");
+    if (!container) return;
+    container.innerHTML = "";
+
+    const calculated = calculateStockPortfolio();
+    const usdToIdr = getRatesForCurrency("USD") || 16200;
+
+    calculated.forEach((s, idx) => {
+        const div = document.createElement("div");
+        div.className = "currency-card";
+        div.dataset.symbol = s.symbol;
+        div.dataset.index = idx;
+
+        const isUsd = s.currency === "USD";
+        const priceText = isUsd ? `$ ${formatNumber(s.currentRate, 2)}` : `Rp ${formatNumber(s.currentRate, 0)}`;
+
+        const nativeGainSign = s.totalGain >= 0 ? "+" : "-";
+        const gainClass = s.totalGain >= 0 ? "gain-up" : "gain-down";
+        const totalGainAbs = Math.abs(s.totalGain);
+        const gainPercent = s.totalCost > 0 ? (s.totalGain / s.totalCost) * 100 : 0;
+        const gainPercentAbs = Math.abs(gainPercent);
+
+        const idrGain = isUsd ? s.totalGain * usdToIdr : s.totalGain;
+        const idrGainText = `Rp ${formatNumber(Math.abs(idrGain), 0)}`;
+
+        const gainLabel = s.totalGain >= 0 ? "G" : "L";
+        const nativeGainText = isUsd ? `$ ${formatNumber(totalGainAbs, 2)}` : `Rp ${formatNumber(totalGainAbs, 0)}`;
+        const gainText = `${gainLabel}: ${nativeGainSign} ${nativeGainText} (${nativeGainSign}${formatNumber(gainPercentAbs, 1)}%)` + (isUsd ? ` [${nativeGainSign} ${idrGainText}]` : '');
+
+        const changeSign = s.dailyChangePercent >= 0 ? "+" : "";
+        const changeClass = s.dailyChangePercent >= 0 ? "pill-up" : "pill-down";
+
+        const isSndk = s.symbol === "SNDK";
+        const titleText = isSndk ? `<span style="color:var(--red-down); font-weight:700;">${s.symbol}</span>` : s.symbol;
+        const descText = isSndk ? `<span style="color:var(--red-down); font-size:11px;">Aset Delisted (WDC)</span>` : (s.totalGain !== 0 ? gainText : 'Belum ada transaksi');
+
+        div.innerHTML = `
+            <div class="card-left">
+                <span class="card-drag-handle">☰</span>
+                <span class="card-flag">${getStockFlagHtml(s.symbol)}</span>
+                <div class="card-info">
+                    <span class="card-title">${titleText} <span class="badge-currency">${s.currency}</span> <span style="font-weight: 400; font-size:13px; opacity:0.8;">${priceText}</span></span>
+                    <span class="card-gain ${s.totalGain !== 0 || isSndk ? gainClass : ''}" style="${s.totalGain === 0 && !isSndk ? 'opacity: 0.5;' : ''}">
+                        ${descText}
+                    </span>
+                </div>
+            </div>
+            <div class="card-right">
+                <span class="card-change-pill ${changeClass}">${changeSign}${formatNumber(s.dailyChangePercent, 2)}%</span>
+                <div class="card-actions-menu">
+                    <button class="btn-stock-move-up" title="Pindah Ke Atas">▲</button>
+                    <button class="btn-stock-move-down" title="Pindah Ke Bawah">▼</button>
+                    <button class="btn-delete-stock" style="color:var(--red-down);" title="Hapus">✖</button>
+                </div>
+            </div>
+        `;
+
+        div.querySelector(".btn-stock-move-up").onclick = (e) => {
+            e.stopPropagation();
+            if (idx > 0) {
+                const temp = state.monitoredStocks[idx];
+                state.monitoredStocks[idx] = state.monitoredStocks[idx - 1];
+                state.monitoredStocks[idx - 1] = temp;
+                saveState();
+                renderStockTab();
+            }
+        };
+
+        div.querySelector(".btn-stock-move-down").onclick = (e) => {
+            e.stopPropagation();
+            if (idx < state.monitoredStocks.length - 1) {
+                const temp = state.monitoredStocks[idx];
+                state.monitoredStocks[idx] = state.monitoredStocks[idx + 1];
+                state.monitoredStocks[idx + 1] = temp;
+                saveState();
+                renderStockTab();
+            }
+        };
+
+        div.querySelector(".btn-delete-stock").onclick = (e) => {
+            e.stopPropagation();
+            state.monitoredStocks.splice(idx, 1);
+            saveState();
+            renderStockTab();
+        };
+
+        container.appendChild(div);
+    });
+
+    updateHeaderTitle();
 }
 
 function renderHistoryTab() {
@@ -389,7 +612,7 @@ function renderHistoryTab() {
 
         tr.innerHTML = `
             <td>${formattedDate}</td>
-            <td>${getFlagHtml(t.currency)} <strong>${t.currency}</strong></td>
+            <td>${getAssetFlagHtml(t.currency)} <strong>${t.currency}</strong></td>
             <td>${typeBadge}</td>
             <td>Rp ${formatNumber(t.rate, 2)}</td>
             <td>${formatNumber(t.amount, 4)}</td>
@@ -416,23 +639,30 @@ function renderHistoryTab() {
 }
 
 function renderTotalTab() {
-    const calculated = calculatePortfolio();
     const assetsList = document.getElementById("total-assets-list");
+    if (!assetsList) return;
     assetsList.innerHTML = "";
 
-    const ownedAssets = calculated.filter(c => c.balance > 0);
-    let grandTotal = 0;
+    const calculatedCurrencies = calculatePortfolio();
+    const calculatedStocks = calculateStockPortfolio();
 
-    if (ownedAssets.length === 0) {
+    const ownedCurrencies = calculatedCurrencies.filter(c => c.balance > 0);
+    const ownedStocks = calculatedStocks.filter(s => s.balance > 0);
+
+    let grandTotal = 0;
+    const usdToIdr = getRatesForCurrency("USD") || 16200;
+
+    if (ownedCurrencies.length === 0 && ownedStocks.length === 0) {
         assetsList.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.6;">${getTranslation("empty_portfolio")}</div>`;
     } else {
-        ownedAssets.forEach(c => {
+        // Render owned Currencies
+        ownedCurrencies.forEach(c => {
             const rupiahValue = c.balance * c.currentRate;
             grandTotal += rupiahValue;
 
             const div = document.createElement("div");
             div.className = "asset-card";
-             div.innerHTML = `
+            div.innerHTML = `
                 <div class="asset-header" style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size: 16px; font-weight:700; display:flex; align-items:center; gap:6px;">${getFlagHtml(c.currencyCode)} ${c.currencyCode}</span>
                     <span style="font-size: 16px; font-weight:700; margin-left:auto;">${formatNumber(c.balance, 4)}</span>
@@ -444,6 +674,38 @@ function renderTotalTab() {
                 <div class="asset-row">
                     <span>Kurs Saat Ini:</span>
                     <span class="val">Rp ${formatNumber(c.currentRate, 2)}</span>
+                </div>
+                <div class="asset-row">
+                    <span>Estimasi Nilai Rupiah:</span>
+                    <span class="val" style="color:var(--primary-color); font-weight:700;">Rp ${formatNumber(rupiahValue, 0)}</span>
+                </div>
+            `;
+            assetsList.appendChild(div);
+        });
+
+        // Render owned Stocks
+        ownedStocks.forEach(s => {
+            const isUsd = s.currency === "USD";
+            const rupiahValue = isUsd ? (s.balance * s.currentRate * usdToIdr) : (s.balance * s.currentRate);
+            grandTotal += rupiahValue;
+
+            const priceText = isUsd ? `$ ${formatNumber(s.currentRate, 2)}` : `Rp ${formatNumber(s.currentRate, 0)}`;
+            const avgText = isUsd ? `$ ${formatNumber(s.averageBuyPrice, 2)}` : `Rp ${formatNumber(s.averageBuyPrice, 2)}`;
+
+            const div = document.createElement("div");
+            div.className = "asset-card";
+            div.innerHTML = `
+                <div class="asset-header" style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size: 16px; font-weight:700; display:flex; align-items:center; gap:6px;">${getStockFlagHtml(s.symbol)} ${s.symbol} <span class="badge-currency">${s.currency}</span></span>
+                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${formatNumber(s.balance, 4)}</span>
+                </div>
+                <div class="asset-row">
+                    <span>Harga Beli Rata-rata:</span>
+                    <span class="val">${avgText}</span>
+                </div>
+                <div class="asset-row">
+                    <span>Harga Pasar Saat Ini:</span>
+                    <span class="val">${priceText}</span>
                 </div>
                 <div class="asset-row">
                     <span>Estimasi Nilai Rupiah:</span>
@@ -530,6 +792,13 @@ async function syncRates() {
             state.pegadaianLastUpdated = gold.lastUpdated;
         }
 
+        // Scrape Stocks
+        const stockData = await window.scraper.StockScraper.scrapeRates(state.monitoredStocks);
+        if (Object.keys(stockData).length > 0) {
+            Object.assign(state.stockRates, stockData);
+            state.stocksLastUpdated = `Last Update: ${new Date().toLocaleString("id-ID")}`;
+        }
+
         // Set baseline daily rates
         if (isNewDay || Object.keys(state.baseRatesToday).length === 0) {
             state.lastSyncDay = todayStr;
@@ -541,6 +810,7 @@ async function syncRates() {
         status.innerText = `${getTranslation("sync_success")} : ${new Date().toLocaleTimeString()}`;
         saveState();
         renderMonitorTab();
+        renderStockTab();
         renderTotalTab();
     } catch (e) {
         console.error("Sync error:", e);
@@ -551,11 +821,13 @@ async function syncRates() {
 // Modals Trigger
 const modalOverlay = document.getElementById("modal-container");
 const modalAddCurrency = document.getElementById("modal-add-currency");
+const modalAddStock = document.getElementById("modal-add-stock");
 const modalTransaction = document.getElementById("modal-transaction");
 
 function showModal(modal) {
     modalOverlay.classList.remove("hidden");
     modalAddCurrency.classList.add("hidden");
+    modalAddStock.classList.add("hidden");
     modalTransaction.classList.add("hidden");
     modal.classList.remove("hidden");
 }
@@ -563,6 +835,7 @@ function showModal(modal) {
 function hideModal() {
     modalOverlay.classList.add("hidden");
     modalAddCurrency.classList.add("hidden");
+    modalAddStock.classList.add("hidden");
     modalTransaction.classList.add("hidden");
 }
 
@@ -601,6 +874,40 @@ document.getElementById("btn-add-currency-confirm").onclick = () => {
     hideModal();
 };
 
+// Add Stock Dialog
+document.getElementById("btn-add-stock-trigger").onclick = () => {
+    const select = document.getElementById("add-stock-select");
+    if (!select) return;
+    select.innerHTML = "";
+
+    const available = ALL_STOCKS.filter(s => !state.monitoredStocks.includes(s));
+    if (available.length === 0) {
+        alert("Semua saham sudah dimonitor!");
+        return;
+    }
+
+    available.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        const flag = s.endsWith(".JK") ? "🇮🇩" : "🇺🇸";
+        opt.innerText = `${flag} ${s} - ${STOCK_NAMES[s] || s}`;
+        select.appendChild(opt);
+    });
+
+    showModal(modalAddStock);
+};
+
+document.getElementById("btn-add-stock-cancel").onclick = hideModal;
+document.getElementById("btn-add-stock-confirm").onclick = () => {
+    const val = document.getElementById("add-stock-select").value;
+    if (val && !state.monitoredStocks.includes(val)) {
+        state.monitoredStocks.push(val);
+        saveState();
+        renderStockTab();
+    }
+    hideModal();
+};
+
 // Transaction Modal
 function openTransactionModal(trx = null) {
     const title = document.getElementById("modal-trx-title");
@@ -613,12 +920,36 @@ function openTransactionModal(trx = null) {
 
     // Populate currency dropdown
     currencySelect.innerHTML = "";
+    
+    const optGroupCurrencies = document.createElement("optgroup");
+    optGroupCurrencies.label = "Valuta Asing & Emas";
     ALL_CURRENCIES.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c;
         opt.innerText = `${getFlag(c)} ${c}`;
-        currencySelect.appendChild(opt);
+        optGroupCurrencies.appendChild(opt);
     });
+    currencySelect.appendChild(optGroupCurrencies);
+
+    const optGroupStocks = document.createElement("optgroup");
+    optGroupStocks.label = "Saham (Indonesia & US)";
+    ALL_STOCKS.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        const flag = s.endsWith(".JK") ? "🇮🇩" : "🇺🇸";
+        opt.innerText = `${flag} ${s} - ${STOCK_NAMES[s] || s}`;
+        optGroupStocks.appendChild(opt);
+    });
+    currencySelect.appendChild(optGroupStocks);
+
+    function getAssetPrice(code) {
+        const codeUpper = code.toUpperCase();
+        if (ALL_STOCKS.includes(codeUpper)) {
+            const info = state.stockRates[codeUpper];
+            return info ? info.price : 0;
+        }
+        return getRatesForCurrency(codeUpper);
+    }
 
     // Populate default date
     const now = new Date();
@@ -645,13 +976,12 @@ function openTransactionModal(trx = null) {
         amountInput.value = "";
         dateInput.value = defaultDateStr;
 
-        // Auto pre-populate rate when currency changes
+        // Auto pre-populate rate when asset changes
         currencySelect.onchange = () => {
-            const current = getRatesForCurrency(currencySelect.value);
+            const current = getAssetPrice(currencySelect.value);
             rateInput.value = current || "";
         };
-        // trigger once
-        const current = getRatesForCurrency(currencySelect.value);
+        const current = getAssetPrice(currencySelect.value);
         rateInput.value = current || "";
     }
 
@@ -755,20 +1085,32 @@ document.getElementById("import-file").onchange = (e) => {
 };
 
 // Widget Mode check
-function toggleWidgetMode(force = null) {
+function toggleWidgetMode(force = null, mode = "valas") {
     const isWidget = force !== null ? force : !document.body.classList.contains("widget-mode");
     if (isWidget) {
         document.body.classList.add("widget-mode");
+        if (mode === "saham") {
+            document.body.classList.add("widget-saham");
+        } else {
+            document.body.classList.remove("widget-saham");
+        }
         document.getElementById("btn-widget-toggle").title = "Mode Dashboard Penuh";
         document.getElementById("btn-widget-toggle").innerHTML = `<span class="icon">🖥️</span>`;
     } else {
         document.body.classList.remove("widget-mode");
+        document.body.classList.remove("widget-saham");
         document.getElementById("btn-widget-toggle").title = "Mode Widget";
         document.getElementById("btn-widget-toggle").innerHTML = `<span class="icon">📱</span>`;
     }
+    updateHeaderTitle();
 }
 
-document.getElementById("btn-widget-toggle").onclick = () => toggleWidgetMode();
+document.getElementById("btn-widget-toggle").onclick = () => {
+    // If we are toggling widget mode manually, we check what active tab we are on to determine widget type
+    const activeTab = document.querySelector(".nav-tab.active")?.dataset.tab || "monitor";
+    const mode = activeTab === "saham" ? "saham" : "valas";
+    toggleWidgetMode(null, mode);
+};
 
 // Tab Coordination
 document.querySelectorAll(".nav-tab").forEach(tab => {
@@ -782,9 +1124,11 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
 
         // trigger page-specific refresh
         if (tab.dataset.tab === "monitor") renderMonitorTab();
+        if (tab.dataset.tab === "saham") renderStockTab();
         if (tab.dataset.tab === "history") renderHistoryTab();
         if (tab.dataset.tab === "total") renderTotalTab();
         if (tab.dataset.tab === "settings") renderSettingsTab();
+        updateHeaderTitle();
     };
 });
 
@@ -855,11 +1199,15 @@ window.onload = () => {
 
     // Check URL parameters for widget mode
     const params = new URLSearchParams(window.location.search);
-    if (params.get("widget") === "true") {
-        toggleWidgetMode(true);
+    const widgetParam = params.get("widget");
+    if (widgetParam === "true" || widgetParam === "valas") {
+        toggleWidgetMode(true, "valas");
+    } else if (widgetParam === "saham") {
+        toggleWidgetMode(true, "saham");
     }
 
     renderMonitorTab();
+    renderStockTab();
     syncRates(); // Auto fetch rates on load
     startAutoSync(); // Start interval scheduler
 

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.2">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -34,6 +34,7 @@
         <!-- Navigation Tabs -->
         <nav class="app-nav" id="app-nav">
             <button class="nav-tab active" data-tab="monitor">📊 Monitor</button>
+            <button class="nav-tab" data-tab="saham">📈 Saham</button>
             <button class="nav-tab" data-tab="history">📝 Riwayat</button>
             <button class="nav-tab" data-tab="total">💰 Total</button>
             <button class="nav-tab" data-tab="settings">⚙️ Setelan</button>
@@ -51,6 +52,19 @@
                     <!-- Dynamic currency cards -->
                 </div>
                 <button id="btn-add-currency-trigger" class="fab" title="Tambah Mata Uang">
+                    <span class="icon">➕</span>
+                </button>
+            </section>
+
+            <!-- Saham Tab -->
+            <section id="tab-saham" class="tab-pane">
+                <div class="update-banner" id="stock-update-banner">
+                    <div class="banner-item"><span class="lbl">Pasar Saham:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
+                </div>
+                <div id="stock-list" class="currency-list">
+                    <!-- Dynamic stock cards -->
+                </div>
+                <button id="btn-add-stock-trigger" class="fab" title="Tambah Saham">
                     <span class="icon">➕</span>
                 </button>
             </section>
@@ -195,6 +209,21 @@
             </div>
         </div>
 
+        <!-- Add Stock Modal -->
+        <div id="modal-add-stock" class="modal-card hidden">
+            <h3>Tambah Saham untuk Dimonitor</h3>
+            <div class="modal-body">
+                <label for="add-stock-select">Pilih Kode Saham (Ticker)</label>
+                <select id="add-stock-select" class="form-control">
+                    <!-- Dynamically populated stock options -->
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-add-stock-cancel" class="btn btn-secondary">Batal</button>
+                <button id="btn-add-stock-confirm" class="btn btn-primary">Tambah</button>
+            </div>
+        </div>
+
         <!-- Add/Edit Transaction Modal -->
         <div id="modal-transaction" class="modal-card hidden">
             <h3 id="modal-trx-title">Transaksi Baru</h3>
@@ -234,7 +263,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.0.2"></script>
-    <script src="app.js?v=1.0.2"></script>
+    <script src="scraper.js?v=1.0.3"></script>
+    <script src="app.js?v=1.0.3"></script>
 </body>
 </html>

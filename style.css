@@ -16,7 +16,7 @@
     
     --border-radius: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --font-family: 'Outfit', sans-serif;
+    --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 /* Dark Theme Variables */
@@ -675,6 +675,28 @@ body.widget-mode .tab-pane {
 
 body.widget-mode #tab-monitor {
     display: block;
+}
+
+body.widget-mode.widget-saham #tab-monitor {
+    display: none;
+}
+
+body.widget-mode.widget-saham #tab-saham {
+    display: block;
+}
+
+.badge-currency {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.06);
+    opacity: 0.8;
+    margin-left: 6px;
+}
+
+[data-theme="dark"] .badge-currency {
+    background: rgba(255,255,255,0.08);
 }
 
 body.widget-mode .update-banner {
