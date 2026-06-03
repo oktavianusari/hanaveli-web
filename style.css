@@ -694,19 +694,21 @@ body {
    WIDGET MODE (Vivaldi Custom View)
    ========================================= */
 body.widget-mode {
-    padding: 2px;
-    background: transparent;
+    padding: 0;
+    margin: 0;
+    background: var(--bg-color);
     display: block;
 }
 
 body.widget-mode .app-container {
     max-width: 100%;
-    border-radius: 8px;
+    border-radius: 0;
     padding: 8px 10px;
     gap: 6px;
     background: var(--bg-color);
-    border: 1px solid var(--card-border);
+    border: none;
     box-shadow: none;
+    min-height: 100vh;
 }
 
 body.widget-mode .app-header {
