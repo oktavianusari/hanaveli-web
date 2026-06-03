@@ -1,0 +1,757 @@
+/* CSS Variables & Design Tokens */
+:root {
+    --primary-color: #386A20;
+    --primary-rgb: 56, 106, 32;
+    --secondary-color: #D7E8CD;
+    --text-color: #1A1C18;
+    --bg-color: #F8FAF6;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 8px 32px 0 rgba(140, 160, 130, 0.15);
+    
+    --green-up: #2E7D32;
+    --red-down: #C62828;
+    --green-pill-bg: #E8F5E9;
+    --red-pill-bg: #FFEBEE;
+    
+    --border-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-family: 'Outfit', sans-serif;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --primary-color: #9CD67D;
+    --primary-rgb: 156, 214, 125;
+    --secondary-color: #3C4B35;
+    --text-color: #E3E3DC;
+    --bg-color: #0F120D;
+    --card-bg: rgba(25, 30, 22, 0.7);
+    --card-border: rgba(255, 255, 255, 0.05);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    
+    --green-up: #81C784;
+    --red-down: #E57373;
+    --green-pill-bg: rgba(129, 199, 132, 0.15);
+    --red-pill-bg: rgba(229, 115, 115, 0.15);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: var(--transition);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* App Container (Glassmorphic) */
+.app-container {
+    width: 100%;
+    max-width: 800px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 16px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 32px;
+    animation: rotate 10s linear infinite;
+}
+
+.logo-text h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1.2;
+}
+
+.logo-text span {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.btn-icon:hover {
+    transform: scale(1.08) translateY(-2px);
+    background: var(--secondary-color);
+}
+
+/* Navigation Tabs */
+.app-nav {
+    display: flex;
+    background: rgba(0,0,0,0.04);
+    border-radius: 30px;
+    padding: 4px;
+}
+
+[data-theme="dark"] .app-nav {
+    background: rgba(255,255,255,0.04);
+}
+
+.nav-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+    opacity: 0.7;
+}
+
+.nav-tab:hover {
+    opacity: 1;
+}
+
+.nav-tab.active {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    opacity: 1;
+    font-weight: 600;
+}
+
+/* Content Area */
+.app-content {
+    min-height: 350px;
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Update Banner */
+.update-banner {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-bottom: 16px;
+    background: rgba(0,0,0,0.02);
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+[data-theme="dark"] .update-banner {
+    background: rgba(255,255,255,0.02);
+}
+
+.banner-item .lbl {
+    font-weight: 600;
+}
+
+/* Currency List & Cards */
+.currency-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.currency-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 16px;
+    border-radius: 12px;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    position: relative;
+    cursor: grab;
+}
+
+.currency-card:active {
+    cursor: grabbing;
+}
+
+.currency-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.85);
+}
+
+[data-theme="dark"] .currency-card:hover {
+    background: rgba(25, 30, 22, 0.85);
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-drag-handle {
+    font-size: 16px;
+    opacity: 0.4;
+    cursor: grab;
+}
+
+.card-flag {
+    font-size: 28px;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.card-gain {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.gain-up {
+    color: var(--green-up);
+}
+
+.gain-down {
+    color: var(--red-down);
+}
+
+.card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.card-change-pill {
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pill-up {
+    background-color: var(--green-pill-bg);
+    color: var(--green-up);
+}
+
+.pill-down {
+    background-color: var(--red-pill-bg);
+    color: var(--red-down);
+}
+
+.card-actions-menu {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.card-actions-menu button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.5;
+    transition: var(--transition);
+    padding: 4px;
+}
+
+.card-actions-menu button:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--primary-color);
+    color: var(--bg-color);
+    border: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(var(--primary-rgb), 0.4);
+    transition: var(--transition);
+    z-index: 99;
+}
+
+.fab:hover {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.5);
+}
+
+/* History Tab & Tables */
+.action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.backup-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(0,0,0,0.06);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: rgba(255,255,255,0.06);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-color);
+}
+
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+}
+
+.trx-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.trx-table th, .trx-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.trx-table th {
+    background: rgba(0,0,0,0.02);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .trx-table th {
+    background: rgba(255,255,255,0.02);
+}
+
+.trx-table tr:hover {
+    background: rgba(0,0,0,0.01);
+}
+
+[data-theme="dark"] .trx-table tr:hover {
+    background: rgba(255,255,255,0.01);
+}
+
+.badge-buy {
+    color: var(--green-up);
+    background: var(--green-pill-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.badge-sell {
+    color: var(--red-down);
+    background: var(--red-pill-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+/* Portfolio Summary & Assets */
+.portfolio-summary-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.15);
+}
+
+[data-theme="dark"] .portfolio-summary-card {
+    color: #1A1C18;
+}
+
+.summary-label {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.portfolio-summary-card h2 {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.assets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.asset-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.asset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--card-border);
+    padding-bottom: 8px;
+}
+
+.asset-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.asset-row .val {
+    font-weight: 600;
+}
+
+/* Settings Form Controls */
+.settings-group {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settings-group h3 {
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.setting-item label {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.form-control {
+    font-family: var(--font-family);
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: var(--bg-color);
+    color: var(--text-color);
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+}
+
+.custom-color-pickers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 8px;
+}
+
+.picker-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+/* Modals Overlay & Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-card {
+    background: var(--bg-color);
+    color: var(--text-color);
+    width: 90%;
+    max-width: 450px;
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================================
+   WIDGET MODE (Vivaldi Custom View)
+   ========================================= */
+body.widget-mode {
+    padding: 4px;
+    background: transparent;
+    display: block;
+}
+
+body.widget-mode .app-container {
+    max-width: 100%;
+    border-radius: 12px;
+    padding: 12px;
+    gap: 10px;
+    background: var(--card-bg);
+}
+
+body.widget-mode .app-header {
+    padding-bottom: 8px;
+}
+
+body.widget-mode .logo-text h1 {
+    font-size: 18px;
+}
+
+body.widget-mode .app-nav {
+    display: none;
+}
+
+body.widget-mode .tab-pane {
+    display: none;
+}
+
+body.widget-mode #tab-monitor {
+    display: block;
+}
+
+body.widget-mode .update-banner {
+    font-size: 9px;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+}
+
+body.widget-mode .currency-card {
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+body.widget-mode .card-flag {
+    font-size: 22px;
+}
+
+body.widget-mode .card-title {
+    font-size: 14px;
+}
+
+body.widget-mode .card-change-pill {
+    padding: 2px 6px;
+    font-size: 10px;
+}
+
+body.widget-mode .fab {
+    display: none;
+}
+
+body.widget-mode .card-actions-menu {
+    display: none;
+}
+
+body.widget-mode .card-drag-handle {
+    display: none;
+}
+
+/* Animations */
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile Responsiveness */
+@media(max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .app-container {
+        padding: 16px;
+    }
+    .app-nav {
+        overflow-x: auto;
+    }
+    .nav-tab {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .portfolio-summary-card h2 {
+        font-size: 24px;
+    }
+    .action-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .backup-actions {
+        justify-content: space-between;
+    }
+}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanaveli - Foreign Exchange & Gold Portfolio Monitor</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container" class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <span class="logo-icon">🪙</span>
+                <div class="logo-text">
+                    <h1>Hanaveli</h1>
+                    <span id="sync-status">Memuat data...</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-refresh" class="btn-icon" title="Segarkan Kurs">
+                    <span class="icon">🔄</span>
+                </button>
+                <button id="btn-widget-toggle" class="btn-icon" title="Mode Widget">
+                    <span class="icon">📱</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="app-nav" id="app-nav">
+            <button class="nav-tab active" data-tab="monitor">📊 Monitor</button>
+            <button class="nav-tab" data-tab="history">📝 Riwayat</button>
+            <button class="nav-tab" data-tab="total">💰 Total</button>
+            <button class="nav-tab" data-tab="settings">⚙️ Setelan</button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="app-content">
+            <!-- Monitor Tab -->
+            <section id="tab-monitor" class="tab-pane active">
+                <div class="update-banner" id="update-banner">
+                    <div class="banner-item"><span class="lbl">BCA:</span> <span id="bca-time">-</span></div>
+                    <div class="banner-item"><span class="lbl">IndoGold:</span> <span id="indogold-time">-</span></div>
+                </div>
+                <div id="currency-list" class="currency-list">
+                    <!-- Dynamic currency cards -->
+                </div>
+                <button id="btn-add-currency-trigger" class="fab" title="Tambah Mata Uang">
+                    <span class="icon">➕</span>
+                </button>
+            </section>
+
+            <!-- History Tab -->
+            <section id="tab-history" class="tab-pane">
+                <div class="action-row">
+                    <button id="btn-add-trx-trigger" class="btn btn-primary">➕ Transaksi Baru</button>
+                    <div class="backup-actions">
+                        <button id="btn-export" class="btn btn-secondary">📤 Ekspor JSON</button>
+                        <label for="import-file" class="btn btn-secondary" style="cursor: pointer;">
+                            📥 Impor JSON
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="trx-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Valas</th>
+                                <th>Tipe</th>
+                                <th>Nilai Kurs</th>
+                                <th>Jumlah</th>
+                                <th>Total (IDR)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trx-list">
+                            <!-- Dynamic transaction list -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Total Tab -->
+            <section id="tab-total" class="tab-pane">
+                <div class="portfolio-summary-card">
+                    <span class="summary-label">Estimasi Nilai Total Portofolio</span>
+                    <h2 id="grand-total-idr">Rp0</h2>
+                </div>
+                <div id="total-assets-list" class="assets-list">
+                    <!-- Dynamic total list -->
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="tab-settings" class="tab-pane">
+                <div class="settings-group">
+                    <h3>📈 Preferensi Kurs</h3>
+                    <div class="setting-item">
+                        <label for="set-rate-type">Tipe Kurs BCA</label>
+                        <select id="set-rate-type" class="form-control">
+                            <option value="e-rate">e-Rate BCA</option>
+                            <option value="bank notes">Bank Notes BCA</option>
+                            <option value="tt counter">TT Counter BCA</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="set-rate-dir">Arah Kurs Valas</label>
+                        <select id="set-rate-dir" class="form-control">
+                            <option value="jual">Jual Bank (Harga Beli User)</option>
+                            <option value="beli">Beli Bank (Harga Jual User)</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="set-emas-dir">Arah Kurs Emas</label>
+                        <select id="set-emas-dir" class="form-control">
+                            <option value="jual">Jual IndoGold (Harga Beli User)</option>
+                            <option value="beli">Beli IndoGold (Harga Jual User)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>🎨 Tampilan & Tema</h3>
+                    <div class="setting-item">
+                        <label for="set-theme">Tema Warna</label>
+                        <select id="set-theme" class="form-control">
+                            <option value="system">Sistem (Auto)</option>
+                            <option value="light">Terang</option>
+                            <option value="dark">Gelap</option>
+                            <option value="custom">Kustomisasi Warna</option>
+                        </select>
+                    </div>
+                    <div id="custom-color-pickers" class="custom-color-pickers hidden">
+                        <div class="picker-row">
+                            <label>Primary Color</label>
+                            <input type="color" id="color-primary" value="#386A20">
+                        </div>
+                        <div class="picker-row">
+                            <label>Secondary Color</label>
+                            <input type="color" id="color-secondary" value="#D7E8CD">
+                        </div>
+                        <div class="picker-row">
+                            <label>Text Color</label>
+                            <input type="color" id="color-text" value="#1A1C18">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>🌐 Bahasa</h3>
+                    <div class="setting-item">
+                        <label for="set-lang">Bahasa Aplikasi</label>
+                        <select id="set-lang" class="form-control">
+                            <option value="system">Sistem (Auto)</option>
+                            <option value="id">Bahasa Indonesia</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Dialogs -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <!-- Add Currency Modal -->
+        <div id="modal-add-currency" class="modal-card hidden">
+            <h3>Tambah Valas untuk Dimonitor</h3>
+            <div class="modal-body">
+                <label for="add-currency-select">Pilih Mata Uang</label>
+                <select id="add-currency-select" class="form-control">
+                    <!-- Dynamically populated available currencies -->
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-add-currency-cancel" class="btn btn-secondary">Batal</button>
+                <button id="btn-add-currency-confirm" class="btn btn-primary">Tambah</button>
+            </div>
+        </div>
+
+        <!-- Add/Edit Transaction Modal -->
+        <div id="modal-transaction" class="modal-card hidden">
+            <h3 id="modal-trx-title">Transaksi Baru</h3>
+            <div class="modal-body">
+                <input type="hidden" id="trx-id">
+                <div class="form-group">
+                    <label for="trx-currency">Mata Uang / Aset</label>
+                    <select id="trx-currency" class="form-control">
+                        <!-- currencies -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trx-type">Jenis Transaksi</label>
+                    <select id="trx-type" class="form-control">
+                        <option value="BUY">BELI (Tambah Aset)</option>
+                        <option value="SELL">JUAL (Kurangi Aset)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trx-rate">Nilai Kurs Transaksi (IDR per unit)</label>
+                    <input type="number" id="trx-rate" class="form-control" placeholder="Contoh: 16250" step="any" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="trx-amount">Jumlah Unit</label>
+                    <input type="number" id="trx-amount" class="form-control" placeholder="Contoh: 100" step="any" min="0.0001" required>
+                </div>
+                <div class="form-group">
+                    <label for="trx-date">Tanggal Transaksi</label>
+                    <input type="datetime-local" id="trx-date" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-trx-cancel" class="btn btn-secondary">Batal</button>
+                <button id="btn-trx-confirm" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App JavaScript -->
+    <script src="scraper.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
