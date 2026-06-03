@@ -163,6 +163,9 @@ function loadState() {
         const stored = localStorage.getItem("hanaveli_state");
         if (stored) {
             state = JSON.parse(stored);
+            if (!state.settings.syncInterval) {
+                state.settings.syncInterval = 15;
+            }
         } else {
             // Seed defaults
             state.monitored = [...DEFAULT_MONITORED];
@@ -171,6 +174,7 @@ function loadState() {
                 rateType: "e-rate",
                 rateDirection: "jual",
                 emasRateDirection: "jual",
+                syncInterval: 15,
                 themePreference: "system",
                 customColors: { primary: "#386A20", secondary: "#D7E8CD", text: "#1A1C18" },
                 language: "system"
@@ -457,6 +461,7 @@ function renderSettingsTab() {
     document.getElementById("set-rate-type").value = state.settings.rateType;
     document.getElementById("set-rate-dir").value = state.settings.rateDirection;
     document.getElementById("set-emas-dir").value = state.settings.emasRateDirection;
+    document.getElementById("set-sync-interval").value = state.settings.syncInterval || 15;
     document.getElementById("set-theme").value = state.settings.themePreference;
     document.getElementById("set-lang").value = state.settings.language;
 
@@ -809,6 +814,12 @@ document.getElementById("set-theme").onchange = (e) => {
     applyTheme();
 };
 
+document.getElementById("set-sync-interval").onchange = (e) => {
+    state.settings.syncInterval = parseInt(e.target.value);
+    saveState();
+    startAutoSync();
+};
+
 document.getElementById("set-lang").onchange = (e) => {
     state.settings.language = e.target.value;
     saveState();
@@ -830,6 +841,13 @@ bindColorPicker("color-text", "text");
 // Refresh button trigger
 document.getElementById("btn-refresh").onclick = syncRates;
 
+let syncIntervalId = null;
+function startAutoSync() {
+    if (syncIntervalId) clearInterval(syncIntervalId);
+    const mins = state.settings.syncInterval || 15;
+    syncIntervalId = setInterval(syncRates, mins * 60 * 1000);
+}
+
 // App Initialization
 window.onload = () => {
     loadState();
@@ -843,6 +861,7 @@ window.onload = () => {
 
     renderMonitorTab();
     syncRates(); // Auto fetch rates on load
+    startAutoSync(); // Start interval scheduler
 
     // Setup media query listener for system themes
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {

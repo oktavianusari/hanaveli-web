@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.1">
+    <link rel="stylesheet" href="style.css?v=1.0.2">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -124,6 +124,16 @@
                             <option value="beli">Beli IndoGold (Harga Jual User)</option>
                         </select>
                     </div>
+                    <div class="setting-item">
+                        <label for="set-sync-interval">Frekuensi Sinkronisasi Kurs</label>
+                        <select id="set-sync-interval" class="form-control">
+                            <option value="5">5 Menit Sekali</option>
+                            <option value="15">15 Menit Sekali</option>
+                            <option value="30">30 Menit Sekali</option>
+                            <option value="45">45 Menit Sekali</option>
+                            <option value="60">1 Jam Sekali</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="settings-group">
@@ -224,7 +234,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.0.1"></script>
-    <script src="app.js?v=1.0.1"></script>
+    <script src="scraper.js?v=1.0.2"></script>
+    <script src="app.js?v=1.0.2"></script>
 </body>
 </html>
