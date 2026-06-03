@@ -144,6 +144,19 @@ function getFlag(code) {
     return FLAG_EMOJIS[code] || "🏳️";
 }
 
+function getFlagHtml(code) {
+    if (code === "EMAS") {
+        return `<span class="card-flag">🪙</span>`;
+    }
+    const countryCode = {
+        USD: "us", SGD: "sg", EUR: "eu", GBP: "gb", AUD: "au", CAD: "ca",
+        CHF: "ch", CNY: "cn", HKD: "hk", JPY: "jp", MYR: "my", NZD: "nz",
+        SAR: "sa", SEK: "se", THB: "th", RUB: "ru", KRW: "kr", DKK: "dk", KWD: "kw"
+    }[code.toUpperCase()] || "un";
+    
+    return `<img src="https://flagcdn.com/w40/${countryCode}.png" srcset="https://flagcdn.com/w80/${countryCode}.png 2x" width="24" height="18" alt="${code} flag" class="flag-img" style="vertical-align: middle; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); margin-right: 4px; object-fit: cover;">`;
+}
+
 // Local Storage Handlers
 function loadState() {
     try {
@@ -296,7 +309,7 @@ function renderMonitorTab() {
         div.innerHTML = `
             <div class="card-left">
                 <span class="card-drag-handle">☰</span>
-                <span class="card-flag">${getFlag(c.currencyCode)}</span>
+                <span class="card-flag">${getFlagHtml(c.currencyCode)}</span>
                 <div class="card-info">
                     <span class="card-title">${c.currencyCode} <span style="font-weight: 400; font-size:14px; opacity:0.8;">IDR ${formatNumber(c.currentRate, 2)}</span></span>
                     <span class="card-gain ${c.totalGain !== 0 ? gainClass : ''}" style="${c.totalGain === 0 ? 'opacity: 0.5;' : ''}">
@@ -372,7 +385,7 @@ function renderHistoryTab() {
 
         tr.innerHTML = `
             <td>${formattedDate}</td>
-            <td>${getFlag(t.currency)} <strong>${t.currency}</strong></td>
+            <td>${getFlagHtml(t.currency)} <strong>${t.currency}</strong></td>
             <td>${typeBadge}</td>
             <td>Rp ${formatNumber(t.rate, 2)}</td>
             <td>${formatNumber(t.amount, 4)}</td>
@@ -415,10 +428,10 @@ function renderTotalTab() {
 
             const div = document.createElement("div");
             div.className = "asset-card";
-            div.innerHTML = `
-                <div class="asset-header">
-                    <span style="font-size: 16px; font-weight:700;">${getFlag(c.currencyCode)} ${c.currencyCode}</span>
-                    <span style="font-size: 16px; font-weight:700;">${formatNumber(c.balance, 4)}</span>
+             div.innerHTML = `
+                <div class="asset-header" style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size: 16px; font-weight:700; display:flex; align-items:center; gap:6px;">${getFlagHtml(c.currencyCode)} ${c.currencyCode}</span>
+                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${formatNumber(c.balance, 4)}</span>
                 </div>
                 <div class="asset-row">
                     <span>Harga Beli Rata-rata:</span>
