@@ -36,6 +36,57 @@
     --red-pill-bg: rgba(229, 115, 115, 0.15);
 }
 
+/* Sunset Forest Theme (Vivaldi Match) */
+[data-theme="sunset"] {
+    --primary-color: #ff9f43;
+    --primary-rgb: 255, 159, 67;
+    --secondary-color: #2c3a59;
+    --text-color: #ffffff;
+    --bg-color: #203362;
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+    
+    --green-up: #4cd137;
+    --red-down: #ff7675;
+    --green-pill-bg: rgba(76, 209, 55, 0.2);
+    --red-pill-bg: rgba(255, 118, 117, 0.2);
+}
+
+/* Zen Theme (Vivaldi Match) */
+[data-theme="zen"] {
+    --primary-color: #57606f;
+    --primary-rgb: 87, 96, 111;
+    --secondary-color: #dcdde1;
+    --text-color: #2f3542;
+    --bg-color: #eeeeee;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(47, 53, 66, 0.1);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    
+    --green-up: #2ed573;
+    --red-down: #ff4757;
+    --green-pill-bg: rgba(46, 213, 115, 0.15);
+    --red-pill-bg: rgba(255, 71, 87, 0.15);
+}
+
+/* Vivaldi Red Theme (Vivaldi Match) */
+[data-theme="vivaldi"] {
+    --primary-color: #ef3939;
+    --primary-rgb: 239, 57, 57;
+    --secondary-color: #ffe8e8;
+    --text-color: #1e272e;
+    --bg-color: #ffffff;
+    --card-bg: rgba(250, 250, 250, 0.9);
+    --card-border: rgba(0, 0, 0, 0.08);
+    --shadow: 0 8px 32px 0 rgba(239, 57, 57, 0.08);
+    
+    --green-up: #2ecc71;
+    --red-down: #e74c3c;
+    --green-pill-bg: rgba(46, 204, 113, 0.15);
+    --red-pill-bg: rgba(231, 76, 60, 0.15);
+}
+
 /* Base Styles */
 * {
     box-sizing: border-box;
@@ -653,7 +704,9 @@ body.widget-mode .app-container {
     border-radius: 8px;
     padding: 8px 10px;
     gap: 6px;
-    background: var(--card-bg);
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
+    box-shadow: none;
 }
 
 body.widget-mode .app-header {
@@ -711,6 +764,9 @@ body.widget-mode .currency-list {
 body.widget-mode .currency-card {
     padding: 6px 10px;
     border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: none;
 }
 
 body.widget-mode .card-flag {

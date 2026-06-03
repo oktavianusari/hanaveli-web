@@ -749,10 +749,8 @@ function applyTheme() {
     document.documentElement.style.removeProperty("--secondary-color");
     document.documentElement.style.removeProperty("--text-color");
 
-    if (pref === "dark") {
-        body.setAttribute("data-theme", "dark");
-    } else if (pref === "light") {
-        body.setAttribute("data-theme", "light");
+    if (["dark", "light", "sunset", "zen", "vivaldi"].includes(pref)) {
+        body.setAttribute("data-theme", pref);
     } else if (pref === "system") {
         const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         if (isSystemDark) {
