@@ -783,22 +783,38 @@ body.widget-mode.widget-saham #tab-saham {
     background: rgba(255,255,255,0.08);
 }
 
-body.widget-mode .update-banner {
-    font-size: 8px;
-    margin-bottom: 6px;
-    padding: 3px 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-body.widget-mode .update-banner > div {
+.banner-texts {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    flex: 1;
+}
+
+.banner-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+body.widget-mode .update-banner {
+    font-size: 8px;
+    margin-bottom: 6px;
+    padding: 4px 44px 4px 6px;
+    position: relative;
+    display: block;
+    min-height: 24px;
+}
+
+body.widget-mode .banner-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+body.widget-mode .banner-actions {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 body.widget-mode .banner-item {

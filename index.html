@@ -45,11 +45,11 @@
             <!-- Monitor Tab -->
             <section id="tab-monitor" class="tab-pane active">
                 <div class="update-banner" id="update-banner">
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div class="banner-texts">
                         <div class="banner-item"><span class="lbl">BCA:</span> <span id="bca-time">-</span></div>
                         <div class="banner-item"><span class="lbl">IndoGold:</span> <span id="indogold-time">-</span></div>
                     </div>
-                    <div style="display: flex; gap: 6px; align-items: center;">
+                    <div class="banner-actions">
                         <button id="btn-toggle-widget-gain" class="btn-action-widget" title="Tampilkan/Sembunyikan Gain Transaksi">
                             <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </button>
@@ -69,10 +69,14 @@
             <!-- Saham Tab -->
             <section id="tab-saham" class="tab-pane">
                 <div class="update-banner" id="stock-update-banner">
-                    <div class="banner-item"><span class="lbl">Pasar Saham via Yahoo Finance:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
-                    <button class="btn-sync-widget" title="Segarkan Data">
-                        <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                    </button>
+                    <div class="banner-texts">
+                        <div class="banner-item"><span class="lbl">Pasar Saham via Yahoo Finance:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
+                    </div>
+                    <div class="banner-actions">
+                        <button class="btn-sync-widget" title="Segarkan Data">
+                            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="stock-list" class="currency-list">
                     <!-- Dynamic stock cards -->
