@@ -254,7 +254,7 @@ body {
     font-weight: 600;
 }
 
-.btn-sync-widget {
+.btn-sync-widget, .btn-action-widget {
     background: none;
     border: none;
     padding: 4px;
@@ -268,13 +268,15 @@ body {
     transition: var(--transition);
 }
 
-.btn-sync-widget:hover {
+.btn-sync-widget:hover, .btn-action-widget:hover {
     opacity: 1;
     background: rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] .btn-sync-widget:hover,
-[data-theme="sunset"] .btn-sync-widget:hover {
+[data-theme="dark"] .btn-action-widget:hover,
+[data-theme="sunset"] .btn-sync-widget:hover,
+[data-theme="sunset"] .btn-action-widget:hover {
     background: rgba(255, 255, 255, 0.08);
 }
 
@@ -867,5 +869,59 @@ body.widget-mode .card-drag-handle {
     }
     .backup-actions {
         justify-content: space-between;
+    }
+}
+
+/* Portfolio Summary Container */
+.portfolio-summary-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.portfolio-summary-container .portfolio-summary-card {
+    flex: 1;
+    margin-bottom: 0;
+}
+@media (max-width: 600px) {
+    .portfolio-summary-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Card Transaction Gain display (Widget view) */
+.card-trx-gain {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.card-trx-gain.gain-up {
+    color: var(--green-up);
+    background: rgba(56, 106, 32, 0.08);
+}
+.card-trx-gain.gain-down {
+    color: var(--red-down);
+    background: rgba(186, 26, 26, 0.08);
+}
+
+/* Two-column layout for settings */
+#tab-settings.tab-pane.active {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.settings-actions {
+    grid-column: span 2;
+    margin-top: 10px;
+}
+@media (max-width: 600px) {
+    #tab-settings.tab-pane.active {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .settings-actions {
+        grid-column: span 1;
     }
 }

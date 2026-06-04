@@ -49,9 +49,14 @@
                         <div class="banner-item"><span class="lbl">BCA:</span> <span id="bca-time">-</span></div>
                         <div class="banner-item"><span class="lbl">IndoGold:</span> <span id="indogold-time">-</span></div>
                     </div>
-                    <button class="btn-sync-widget" title="Segarkan Data">
-                        <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                    </button>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button id="btn-toggle-widget-gain" class="btn-action-widget" title="Tampilkan/Sembunyikan Gain Transaksi">
+                            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                        <button class="btn-sync-widget" title="Segarkan Data">
+                            <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="currency-list" class="currency-list">
                     <!-- Dynamic currency cards -->
@@ -64,7 +69,7 @@
             <!-- Saham Tab -->
             <section id="tab-saham" class="tab-pane">
                 <div class="update-banner" id="stock-update-banner">
-                    <div class="banner-item"><span class="lbl">Pasar Saham:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
+                    <div class="banner-item"><span class="lbl">Pasar Saham via Yahoo Finance:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
                     <button class="btn-sync-widget" title="Segarkan Data">
                         <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                     </button>
@@ -117,9 +122,15 @@
                 <div class="action-row" style="justify-content: flex-end; margin-bottom: 12px; margin-top: 4px;">
                     <button id="btn-privacy-total" class="btn btn-secondary btn-privacy-toggle" title="Tampilkan/Sembunyikan Nilai"></button>
                 </div>
-                <div class="portfolio-summary-card">
-                    <span class="summary-label">Estimasi Nilai Total Portofolio</span>
-                    <h2 id="grand-total-idr">Rp0</h2>
+                <div class="portfolio-summary-container">
+                    <div class="portfolio-summary-card">
+                        <span class="summary-label">Estimasi Persentase Gain atau Loss</span>
+                        <h2 id="grand-gain-percent">0.00%</h2>
+                    </div>
+                    <div class="portfolio-summary-card">
+                        <span class="summary-label">Estimasi Nilai Total Portofolio</span>
+                        <h2 id="grand-total-idr">Rp0</h2>
+                    </div>
                 </div>
                 <div id="total-assets-list" class="assets-list">
                     <!-- Dynamic total list -->
@@ -179,18 +190,18 @@
                             <option value="custom">Kustomisasi Warna</option>
                         </select>
                     </div>
-                    <div id="auto-time-settings" class="custom-color-pickers hidden" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 12px;">
-                        <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
+                    <div id="auto-time-settings" class="custom-color-pickers hidden" style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px; border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 12px;">
+                        <div class="setting-item">
                             <label for="set-day-theme">Tema Siang (06:00 - 18:00)</label>
-                            <select id="set-day-theme" class="form-control" style="width: 160px; height: 36px; padding: 4px 8px;">
+                            <select id="set-day-theme" class="form-control">
                                 <option value="light">Terang</option>
                                 <option value="zen">Zen (Vivaldi)</option>
                                 <option value="vivaldi">Vivaldi Red</option>
                             </select>
                         </div>
-                        <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding-bottom: 0;">
+                        <div class="setting-item">
                             <label for="set-night-theme">Tema Malam (18:00 - 06:00)</label>
-                            <select id="set-night-theme" class="form-control" style="width: 160px; height: 36px; padding: 4px 8px;">
+                            <select id="set-night-theme" class="form-control">
                                 <option value="dark">Gelap</option>
                                 <option value="sunset">Sunset Forest (Vivaldi)</option>
                             </select>
@@ -222,6 +233,9 @@
                             <option value="en">English</option>
                         </select>
                     </div>
+                </div>
+                <div class="settings-actions">
+                    <button id="btn-save-settings" class="btn btn-primary" style="width: 100%; padding: 12px;">Simpan Pengaturan</button>
                 </div>
             </section>
         </main>

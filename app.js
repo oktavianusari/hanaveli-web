@@ -77,6 +77,8 @@ let state = {
 // Privacy Protection State
 let privacyHidden = true;
 let privacyTimeout = null;
+let widgetGainVisible = false;
+let widgetGainTimeout = null;
 
 // Localization Translations
 const TRANSLATIONS = {
@@ -298,6 +300,24 @@ function togglePrivacy() {
     renderTotalTab();
 }
 
+function toggleWidgetGain() {
+    widgetGainVisible = !widgetGainVisible;
+    if (widgetGainTimeout) {
+        clearTimeout(widgetGainTimeout);
+        widgetGainTimeout = null;
+    }
+    if (widgetGainVisible) {
+        // Auto-hide again after 10 seconds
+        widgetGainTimeout = setTimeout(() => {
+            widgetGainVisible = false;
+            renderPrivacyButtons();
+            renderMonitorTab();
+        }, 10000);
+    }
+    renderPrivacyButtons();
+    renderMonitorTab();
+}
+
 function renderPrivacyButtons() {
     const btnHistory = document.getElementById("btn-privacy-history");
     const btnTotal = document.getElementById("btn-privacy-total");
@@ -307,6 +327,13 @@ function renderPrivacyButtons() {
 
     if (btnHistory) btnHistory.innerHTML = label;
     if (btnTotal) btnTotal.innerHTML = label;
+
+    const btnWidgetGain = document.getElementById("btn-toggle-widget-gain");
+    if (btnWidgetGain) {
+        btnWidgetGain.innerHTML = widgetGainVisible ?
+            `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>` :
+            `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    }
 }
 
 // Rate Math & Portfolio Engine
@@ -504,6 +531,12 @@ function renderMonitorTab() {
         const changeSign = c.dailyChangePercent >= 0 ? "+" : "";
         const changeClass = c.dailyChangePercent >= 0 ? "pill-up" : "pill-down";
 
+        let trxGainHtml = "";
+        if (c.totalGain !== 0) {
+            const displayTrxGain = widgetGainVisible ? `${sign} Rp ${formatNumber(totalGainAbs, 0)} (${sign}${formatNumber(gainPercentAbs, 1)}%)` : "Rp ---";
+            trxGainHtml = `<span class="card-trx-gain ${gainClass}">${displayTrxGain}</span>`;
+        }
+
         div.innerHTML = `
             <div class="card-left">
                 <span class="card-drag-handle">☰</span>
@@ -515,7 +548,8 @@ function renderMonitorTab() {
                     </span>
                 </div>
             </div>
-            <div class="card-right">
+            <div class="card-right" style="display:flex; align-items:center; gap:8px;">
+                ${trxGainHtml}
                 <span class="card-change-pill ${changeClass}">${changeSign}${formatNumber(c.dailyChangePercent, 2)}%</span>
                 <div class="card-actions-menu">
                     <button class="btn-move-up" title="Pindah Ke Atas"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
@@ -732,6 +766,25 @@ function renderTotalTab() {
     let grandTotal = 0;
     const usdToIdr = getRatesForCurrency("USD") || 16200;
 
+    // Calculate overall portfolio performance
+    let totalCostIdr = 0;
+    let totalGainIdr = 0;
+
+    calculatedCurrencies.forEach(c => {
+        totalCostIdr += c.totalCost;
+        totalGainIdr += c.totalGain;
+    });
+
+    calculatedStocks.forEach(s => {
+        const isUsd = s.currency === "USD";
+        const costIdr = isUsd ? s.totalCost * usdToIdr : s.totalCost;
+        const gainIdr = isUsd ? s.totalGain * usdToIdr : s.totalGain;
+        totalCostIdr += costIdr;
+        totalGainIdr += gainIdr;
+    });
+
+    const grandGainPercent = totalCostIdr > 0 ? (totalGainIdr / totalCostIdr) * 100 : 0;
+
     if (ownedCurrencies.length === 0 && ownedStocks.length === 0) {
         assetsList.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.6;">${getTranslation("empty_portfolio")}</div>`;
     } else {
@@ -804,6 +857,12 @@ function renderTotalTab() {
 
     const displayGrandTotal = privacyHidden ? "Rp -----" : formatCurrencyIdr(grandTotal);
     document.getElementById("grand-total-idr").innerText = displayGrandTotal;
+
+    const percentEl = document.getElementById("grand-gain-percent");
+    if (percentEl) {
+        percentEl.innerText = privacyHidden ? "-----" : `${totalGainIdr >= 0 ? "+" : ""}${formatNumber(grandGainPercent, 2)}%`;
+        percentEl.style.color = privacyHidden ? "var(--text-color)" : (totalGainIdr >= 0 ? "var(--green-up)" : "var(--red-down)");
+    }
 }
 
 function renderSettingsTab() {
@@ -1243,67 +1302,55 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
     };
 });
 
-// Settings Changes Handler
-document.getElementById("set-rate-type").onchange = (e) => {
-    state.settings.rateType = e.target.value;
-    saveState();
-    renderMonitorTab();
-};
-
-document.getElementById("set-rate-dir").onchange = (e) => {
-    state.settings.rateDirection = e.target.value;
-    saveState();
-    renderMonitorTab();
-};
-
-document.getElementById("set-emas-dir").onchange = (e) => {
-    state.settings.emasRateDirection = e.target.value;
-    saveState();
-    renderMonitorTab();
-};
-
+// Settings Changes Handler (Dynamic UI toggle only)
 document.getElementById("set-theme").onchange = (e) => {
-    state.settings.themePreference = e.target.value;
-    saveState();
-    renderSettingsTab();
-    applyTheme();
+    const val = e.target.value;
+    if (val === "custom") {
+        document.getElementById("custom-color-pickers").classList.remove("hidden");
+    } else {
+        document.getElementById("custom-color-pickers").classList.add("hidden");
+    }
+    if (val === "auto-time") {
+        document.getElementById("auto-time-settings").classList.remove("hidden");
+    } else {
+        document.getElementById("auto-time-settings").classList.add("hidden");
+    }
 };
 
-document.getElementById("set-day-theme").onchange = (e) => {
-    state.settings.dayTheme = e.target.value;
+// Save Settings Event Listener
+document.getElementById("btn-save-settings").onclick = () => {
+    const oldLang = state.settings.language;
+
+    state.settings.rateType = document.getElementById("set-rate-type").value;
+    state.settings.rateDirection = document.getElementById("set-rate-dir").value;
+    state.settings.emasRateDirection = document.getElementById("set-emas-dir").value;
+    state.settings.syncInterval = parseInt(document.getElementById("set-sync-interval").value);
+    state.settings.themePreference = document.getElementById("set-theme").value;
+    state.settings.language = document.getElementById("set-lang").value;
+    state.settings.dayTheme = document.getElementById("set-day-theme").value;
+    state.settings.nightTheme = document.getElementById("set-night-theme").value;
+
+    if (state.settings.themePreference === "custom") {
+        state.settings.customColors.primary = document.getElementById("color-primary").value;
+        state.settings.customColors.secondary = document.getElementById("color-secondary").value;
+        state.settings.customColors.text = document.getElementById("color-text").value;
+    }
+
     saveState();
     applyTheme();
-};
-
-document.getElementById("set-night-theme").onchange = (e) => {
-    state.settings.nightTheme = e.target.value;
-    saveState();
-    applyTheme();
-};
-
-document.getElementById("set-sync-interval").onchange = (e) => {
-    state.settings.syncInterval = parseInt(e.target.value);
-    saveState();
     startAutoSync();
-};
 
-document.getElementById("set-lang").onchange = (e) => {
-    state.settings.language = e.target.value;
-    saveState();
-    location.reload(); // Reload to refresh headers & translations
-};
+    renderMonitorTab();
+    renderStockTab();
+    renderTotalTab();
+    renderSettingsTab();
 
-// Color pickers changes
-const bindColorPicker = (id, key) => {
-    document.getElementById(id).onchange = (e) => {
-        state.settings.customColors[key] = e.target.value;
-        saveState();
-        applyTheme();
-    };
+    if (state.settings.language !== oldLang) {
+        location.reload();
+    } else {
+        alert("Pengaturan berhasil disimpan!");
+    }
 };
-bindColorPicker("color-primary", "primary");
-bindColorPicker("color-secondary", "secondary");
-bindColorPicker("color-text", "text");
 
 // Refresh button trigger
 document.getElementById("btn-refresh").onclick = syncRates;
@@ -1345,6 +1392,10 @@ window.onload = () => {
     // Bind privacy toggle buttons
     document.getElementById("btn-privacy-history").onclick = togglePrivacy;
     document.getElementById("btn-privacy-total").onclick = togglePrivacy;
+    const btnToggleWidgetGain = document.getElementById("btn-toggle-widget-gain");
+    if (btnToggleWidgetGain) {
+        btnToggleWidgetGain.onclick = toggleWidgetGain;
+    }
     renderPrivacyButtons();
 
     syncRates(); // Auto fetch rates on load
