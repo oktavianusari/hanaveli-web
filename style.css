@@ -786,6 +786,27 @@ body.widget-mode .update-banner {
     font-size: 8px;
     margin-bottom: 6px;
     padding: 3px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+body.widget-mode .update-banner > div {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    flex: 1;
+}
+
+body.widget-mode .banner-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1;
 }
 
 body.widget-mode .currency-list {
@@ -798,6 +819,23 @@ body.widget-mode .currency-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     box-shadow: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+body.widget-mode .card-left {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    gap: 6px;
+}
+
+body.widget-mode .card-info {
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 body.widget-mode .card-flag {
@@ -806,6 +844,9 @@ body.widget-mode .card-flag {
 
 body.widget-mode .card-title {
     font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 body.widget-mode .card-gain {
@@ -815,6 +856,14 @@ body.widget-mode .card-gain {
 body.widget-mode .card-change-pill {
     padding: 1px 5px;
     font-size: 9px;
+}
+
+body.widget-mode .card-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 body.widget-mode .fab {
@@ -891,11 +940,15 @@ body.widget-mode .card-drag-handle {
 
 /* Card Transaction Gain display (Widget view) */
 .card-trx-gain {
-    font-size: 10px;
+    display: none;
+    font-size: 9px;
     font-weight: 600;
-    padding: 2px 6px;
+    padding: 1px 5px;
     border-radius: 4px;
     white-space: nowrap;
+}
+body.widget-mode .card-trx-gain {
+    display: inline-block;
 }
 .card-trx-gain.gain-up {
     color: var(--green-up);
