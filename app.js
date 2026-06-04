@@ -869,8 +869,16 @@ function renderTotalTab() {
 
     const percentEl = document.getElementById("grand-gain-percent");
     if (percentEl) {
-        percentEl.innerText = privacyHidden ? "-----" : `${totalPortfolioGainLoss >= 0 ? "+" : ""}${formatNumber(totalPortfolioGainLossPercent, 2)}%`;
-        percentEl.style.color = privacyHidden ? "var(--text-color)" : (totalPortfolioGainLoss >= 0 ? "var(--green-up)" : "var(--red-down)");
+        if (privacyHidden) {
+            percentEl.innerText = "Rp ----- (-----%)";
+            percentEl.style.color = "var(--text-color)";
+        } else {
+            const absGain = Math.abs(totalPortfolioGainLoss);
+            const sign = totalPortfolioGainLoss >= 0 ? "+" : "-";
+            const percentSign = totalPortfolioGainLossPercent >= 0 ? "+" : "";
+            percentEl.innerText = `${sign} Rp ${formatNumber(absGain, 0)} (${percentSign}${formatNumber(totalPortfolioGainLossPercent, 2)}%)`;
+            percentEl.style.color = totalPortfolioGainLoss >= 0 ? "var(--green-up)" : "var(--red-down)";
+        }
     }
 }
 
