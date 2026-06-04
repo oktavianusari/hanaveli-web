@@ -45,7 +45,7 @@ const BcaScraper = {
             if (match) {
                 lastUpdated = match[0];
             } else {
-                lastUpdated = `Terakhir diperbarui: ${new Date().toLocaleDateString("id-ID")}`;
+                lastUpdated = `Terakhir diperbarui: ${new Date().toLocaleString("id-ID", {dateStyle: "short", timeStyle: "short"})} WIB`;
             }
 
             // Parse currency options

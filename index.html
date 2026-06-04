@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.8">
+    <link rel="stylesheet" href="style.css?v=1.0.9">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -80,7 +80,10 @@
             <!-- History Tab -->
             <section id="tab-history" class="tab-pane">
                 <div class="action-row">
-                    <button id="btn-add-trx-trigger" class="btn btn-primary"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Transaksi Baru</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="btn-add-trx-trigger" class="btn btn-primary"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Transaksi Baru</button>
+                        <button id="btn-privacy-history" class="btn btn-secondary btn-privacy-toggle" title="Tampilkan/Sembunyikan Nilai"></button>
+                    </div>
                     <div class="backup-actions">
                         <button id="btn-export" class="btn btn-secondary"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>Ekspor JSON</button>
                         <label for="import-file" class="btn btn-secondary" style="cursor: pointer;">
@@ -111,6 +114,9 @@
 
             <!-- Total Tab -->
             <section id="tab-total" class="tab-pane">
+                <div class="action-row" style="justify-content: flex-end; margin-bottom: 12px; margin-top: 4px;">
+                    <button id="btn-privacy-total" class="btn btn-secondary btn-privacy-toggle" title="Tampilkan/Sembunyikan Nilai"></button>
+                </div>
                 <div class="portfolio-summary-card">
                     <span class="summary-label">Estimasi Nilai Total Portofolio</span>
                     <h2 id="grand-total-idr">Rp0</h2>
@@ -292,7 +298,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.0.8"></script>
-    <script src="app.js?v=1.0.8"></script>
+    <script src="scraper.js?v=1.0.9"></script>
+    <script src="app.js?v=1.0.9"></script>
 </body>
 </html>

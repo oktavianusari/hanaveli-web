@@ -72,8 +72,11 @@ let state = {
     lastSyncDay: "",
     bcaLastUpdated: "",
     pegadaianLastUpdated: "",
-    stocksLastUpdated: ""
 };
+
+// Privacy Protection State
+let privacyHidden = true;
+let privacyTimeout = null;
 
 // Localization Translations
 const TRANSLATIONS = {
@@ -245,6 +248,38 @@ function saveState() {
     } catch (e) {
         console.error("Failed saving state:", e);
     }
+}
+
+// Privacy Protection Functions
+function togglePrivacy() {
+    privacyHidden = !privacyHidden;
+    if (privacyTimeout) {
+        clearTimeout(privacyTimeout);
+        privacyTimeout = null;
+    }
+    if (!privacyHidden) {
+        // Auto-hide again after 30 seconds
+        privacyTimeout = setTimeout(() => {
+            privacyHidden = true;
+            renderPrivacyButtons();
+            renderHistoryTab();
+            renderTotalTab();
+        }, 30000);
+    }
+    renderPrivacyButtons();
+    renderHistoryTab();
+    renderTotalTab();
+}
+
+function renderPrivacyButtons() {
+    const btnHistory = document.getElementById("btn-privacy-history");
+    const btnTotal = document.getElementById("btn-privacy-total");
+    const label = privacyHidden ?
+        `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>Tampilkan` :
+        `<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>Sembunyikan (30s)`;
+
+    if (btnHistory) btnHistory.innerHTML = label;
+    if (btnTotal) btnTotal.innerHTML = label;
 }
 
 // Rate Math & Portfolio Engine
@@ -597,6 +632,12 @@ function renderStockTab() {
         container.appendChild(div);
     });
 
+    // Update stock update banner time with date and time
+    const stockTimeEl = document.getElementById("stocks-time");
+    if (stockTimeEl) {
+        stockTimeEl.innerText = state.stocksLastUpdated.replace(/Last Update:?\s*/i, "").trim() || "Live dari Yahoo Finance";
+    }
+
     updateHeaderTitle();
 }
 
@@ -618,13 +659,17 @@ function renderHistoryTab() {
             timeStyle: "short"
         });
 
+        const displayRate = privacyHidden ? "Rp -----" : `Rp ${formatNumber(t.rate, 2)}`;
+        const displayAmount = privacyHidden ? "-----" : formatNumber(t.amount, 4);
+        const displayTotal = privacyHidden ? "Rp -----" : `Rp ${formatNumber(totalIdr, 0)}`;
+
         tr.innerHTML = `
             <td>${formattedDate}</td>
             <td>${getAssetFlagHtml(t.currency)} <strong>${t.currency}</strong></td>
             <td>${typeBadge}</td>
-            <td>Rp ${formatNumber(t.rate, 2)}</td>
-            <td>${formatNumber(t.amount, 4)}</td>
-            <td>Rp ${formatNumber(totalIdr, 0)}</td>
+            <td>${displayRate}</td>
+            <td>${displayAmount}</td>
+            <td>${displayTotal}</td>
             <td>
                 <button class="btn btn-secondary btn-edit-trx" style="padding: 4px 8px; font-size:11px;">✏️</button>
                 <button class="btn btn-secondary btn-del-trx" style="padding: 4px 8px; font-size:11px; color:var(--red-down);">✖</button>
@@ -668,16 +713,20 @@ function renderTotalTab() {
             const rupiahValue = c.balance * c.currentRate;
             grandTotal += rupiahValue;
 
+            const displayBalance = privacyHidden ? "-----" : formatNumber(c.balance, 4);
+            const displayAvg = privacyHidden ? "Rp -----" : `Rp ${formatNumber(c.averageBuyPrice, 2)}`;
+            const displayValue = privacyHidden ? "Rp -----" : `Rp ${formatNumber(rupiahValue, 0)}`;
+
             const div = document.createElement("div");
             div.className = "asset-card";
             div.innerHTML = `
                 <div class="asset-header" style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size: 16px; font-weight:700; display:flex; align-items:center; gap:6px;">${getFlagHtml(c.currencyCode)} ${c.currencyCode}</span>
-                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${formatNumber(c.balance, 4)}</span>
+                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${displayBalance}</span>
                 </div>
                 <div class="asset-row">
                     <span>Harga Beli Rata-rata:</span>
-                    <span class="val">Rp ${formatNumber(c.averageBuyPrice, 2)}</span>
+                    <span class="val">${displayAvg}</span>
                 </div>
                 <div class="asset-row">
                     <span>Kurs Saat Ini:</span>
@@ -685,7 +734,7 @@ function renderTotalTab() {
                 </div>
                 <div class="asset-row">
                     <span>Estimasi Nilai Rupiah:</span>
-                    <span class="val" style="color:var(--primary-color); font-weight:700;">Rp ${formatNumber(rupiahValue, 0)}</span>
+                    <span class="val" style="color:var(--primary-color); font-weight:700;">${displayValue}</span>
                 </div>
             `;
             assetsList.appendChild(div);
@@ -697,19 +746,21 @@ function renderTotalTab() {
             const rupiahValue = isUsd ? (s.balance * s.currentRate * usdToIdr) : (s.balance * s.currentRate);
             grandTotal += rupiahValue;
 
+            const displayBalance = privacyHidden ? "-----" : formatNumber(s.balance, 4);
+            const displayAvg = privacyHidden ? (isUsd ? "$ -----" : "Rp -----") : (isUsd ? `$ ${formatNumber(s.averageBuyPrice, 2)}` : `Rp ${formatNumber(s.averageBuyPrice, 2)}`);
+            const displayValue = privacyHidden ? "Rp -----" : `Rp ${formatNumber(rupiahValue, 0)}`;
             const priceText = isUsd ? `$ ${formatNumber(s.currentRate, 2)}` : `Rp ${formatNumber(s.currentRate, 0)}`;
-            const avgText = isUsd ? `$ ${formatNumber(s.averageBuyPrice, 2)}` : `Rp ${formatNumber(s.averageBuyPrice, 2)}`;
 
             const div = document.createElement("div");
             div.className = "asset-card";
             div.innerHTML = `
                 <div class="asset-header" style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size: 16px; font-weight:700; display:flex; align-items:center; gap:6px;">${getStockFlagHtml(s.symbol)} ${s.symbol} <span class="badge-currency">${s.currency}</span></span>
-                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${formatNumber(s.balance, 4)}</span>
+                    <span style="font-size: 16px; font-weight:700; margin-left:auto;">${displayBalance}</span>
                 </div>
                 <div class="asset-row">
                     <span>Harga Beli Rata-rata:</span>
-                    <span class="val">${avgText}</span>
+                    <span class="val">${displayAvg}</span>
                 </div>
                 <div class="asset-row">
                     <span>Harga Pasar Saat Ini:</span>
@@ -717,14 +768,15 @@ function renderTotalTab() {
                 </div>
                 <div class="asset-row">
                     <span>Estimasi Nilai Rupiah:</span>
-                    <span class="val" style="color:var(--primary-color); font-weight:700;">Rp ${formatNumber(rupiahValue, 0)}</span>
+                    <span class="val" style="color:var(--primary-color); font-weight:700;">${displayValue}</span>
                 </div>
             `;
             assetsList.appendChild(div);
         });
     }
 
-    document.getElementById("grand-total-idr").innerText = formatCurrencyIdr(grandTotal);
+    const displayGrandTotal = privacyHidden ? "Rp -----" : formatCurrencyIdr(grandTotal);
+    document.getElementById("grand-total-idr").innerText = displayGrandTotal;
 }
 
 function renderSettingsTab() {
@@ -823,7 +875,7 @@ async function syncRates() {
         const stockData = await window.scraper.StockScraper.scrapeRates(state.monitoredStocks);
         if (Object.keys(stockData).length > 0) {
             Object.assign(state.stockRates, stockData);
-            state.stocksLastUpdated = `Last Update: ${new Date().toLocaleString("id-ID")}`;
+            state.stocksLastUpdated = `Last Update: ${new Date().toLocaleString("id-ID", {dateStyle: "short", timeStyle: "short"})}`;
         }
 
         // Set baseline daily rates
@@ -1262,6 +1314,12 @@ window.onload = () => {
 
     renderMonitorTab();
     renderStockTab();
+    
+    // Bind privacy toggle buttons
+    document.getElementById("btn-privacy-history").onclick = togglePrivacy;
+    document.getElementById("btn-privacy-total").onclick = togglePrivacy;
+    renderPrivacyButtons();
+
     syncRates(); // Auto fetch rates on load
     startAutoSync(); // Start interval scheduler
 
