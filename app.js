@@ -192,15 +192,33 @@ function loadState() {
     try {
         const stored = localStorage.getItem("hanaveli_state");
         if (stored) {
-            state = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            if (parsed && typeof parsed === "object") {
+                state = parsed;
+            }
+            if (!state.settings) {
+                state.settings = {};
+            }
             if (!state.settings.syncInterval) {
                 state.settings.syncInterval = 15;
+            }
+            if (!state.monitored) {
+                state.monitored = [...DEFAULT_MONITORED];
             }
             if (!state.monitoredStocks) {
                 state.monitoredStocks = [...DEFAULT_STOCKS];
             }
+            if (!state.transactions) {
+                state.transactions = [];
+            }
             if (!state.stockRates) {
                 state.stockRates = {};
+            }
+            if (!state.rates) {
+                state.rates = { ...FALLBACK_RATES };
+            }
+            if (!state.baseRatesToday) {
+                state.baseRatesToday = {};
             }
             if (!state.baseStockRatesToday) {
                 state.baseStockRatesToday = {};
@@ -210,6 +228,15 @@ function loadState() {
             }
             if (!state.settings.nightTheme) {
                 state.settings.nightTheme = "dark";
+            }
+            if (!state.settings.themePreference) {
+                state.settings.themePreference = "system";
+            }
+            if (!state.settings.customColors) {
+                state.settings.customColors = { primary: "#386A20", secondary: "#D7E8CD", text: "#1A1C18" };
+            }
+            if (!state.settings.language) {
+                state.settings.language = "system";
             }
         } else {
             // Seed defaults
