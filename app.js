@@ -766,24 +766,33 @@ function renderTotalTab() {
     let grandTotal = 0;
     const usdToIdr = getRatesForCurrency("USD") || 16200;
 
-    // Calculate overall portfolio performance
-    let totalCostIdr = 0;
-    let totalGainIdr = 0;
+    // Calculate overall portfolio performance according to user's formula
+    let totalPortfolioCost = 0;
+    let totalPortfolioValue = 0;
 
-    calculatedCurrencies.forEach(c => {
-        totalCostIdr += c.totalCost;
-        totalGainIdr += c.totalGain;
+    ownedCurrencies.forEach(c => {
+        const totalCost = c.balance * c.averageBuyPrice;
+        const currentValue = c.balance * c.currentRate;
+        totalPortfolioCost += totalCost;
+        totalPortfolioValue += currentValue;
     });
 
-    calculatedStocks.forEach(s => {
+    ownedStocks.forEach(s => {
         const isUsd = s.currency === "USD";
-        const costIdr = isUsd ? s.totalCost * usdToIdr : s.totalCost;
-        const gainIdr = isUsd ? s.totalGain * usdToIdr : s.totalGain;
-        totalCostIdr += costIdr;
-        totalGainIdr += gainIdr;
+        const totalCost = s.balance * s.averageBuyPrice;
+        const currentValue = s.balance * s.currentRate;
+        
+        const costIdr = isUsd ? totalCost * usdToIdr : totalCost;
+        const valueIdr = isUsd ? currentValue * usdToIdr : currentValue;
+        
+        totalPortfolioCost += costIdr;
+        totalPortfolioValue += valueIdr;
     });
 
-    const grandGainPercent = totalCostIdr > 0 ? (totalGainIdr / totalCostIdr) * 100 : 0;
+    const totalPortfolioGainLoss = totalPortfolioValue - totalPortfolioCost;
+    const totalPortfolioGainLossPercent = totalPortfolioCost > 0 ? (totalPortfolioGainLoss / totalPortfolioCost) * 100 : 0;
+
+    grandTotal = totalPortfolioValue;
 
     if (ownedCurrencies.length === 0 && ownedStocks.length === 0) {
         assetsList.innerHTML = `<div style="text-align:center; padding: 40px 0; opacity: 0.6;">${getTranslation("empty_portfolio")}</div>`;
@@ -860,8 +869,8 @@ function renderTotalTab() {
 
     const percentEl = document.getElementById("grand-gain-percent");
     if (percentEl) {
-        percentEl.innerText = privacyHidden ? "-----" : `${totalGainIdr >= 0 ? "+" : ""}${formatNumber(grandGainPercent, 2)}%`;
-        percentEl.style.color = privacyHidden ? "var(--text-color)" : (totalGainIdr >= 0 ? "var(--green-up)" : "var(--red-down)");
+        percentEl.innerText = privacyHidden ? "-----" : `${totalPortfolioGainLoss >= 0 ? "+" : ""}${formatNumber(totalPortfolioGainLossPercent, 2)}%`;
+        percentEl.style.color = privacyHidden ? "var(--text-color)" : (totalPortfolioGainLoss >= 0 ? "var(--green-up)" : "var(--red-down)");
     }
 }
 
