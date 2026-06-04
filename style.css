@@ -790,24 +790,19 @@ body.widget-mode .update-banner {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: nowrap;
-    overflow: hidden;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 body.widget-mode .update-banner > div {
     display: flex;
     gap: 8px;
-    flex-wrap: nowrap;
-    overflow: hidden;
+    flex-wrap: wrap;
     flex: 1;
 }
 
 body.widget-mode .banner-item {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    flex: 1;
+    white-space: normal;
 }
 
 body.widget-mode .currency-list {
