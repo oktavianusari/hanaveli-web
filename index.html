@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.1.5">
+    <link rel="stylesheet" href="style.css?v=1.1.6">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -268,10 +268,17 @@
         <div id="modal-add-stock" class="modal-card hidden">
             <h3>Tambah Saham untuk Dimonitor</h3>
             <div class="modal-body">
-                <label for="add-stock-select">Pilih Kode Saham (Ticker)</label>
-                <select id="add-stock-select" class="form-control">
-                    <!-- Dynamically populated stock options -->
-                </select>
+                <div class="form-group">
+                    <label for="add-stock-input">Masukkan Kode Saham Kustom (Ticker Yahoo Finance)</label>
+                    <input type="text" id="add-stock-input" class="form-control" placeholder="Contoh: AMZN, TSLA, BBRI.JK">
+                </div>
+                <div style="text-align: center; margin: 4px 0; opacity: 0.6; font-size: 13px;">— ATAU —</div>
+                <div class="form-group">
+                    <label for="add-stock-select">Pilih Saham Terpopuler</label>
+                    <select id="add-stock-select" class="form-control">
+                        <!-- Dynamically populated stock options -->
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="btn-add-stock-cancel" class="btn btn-secondary">Batal</button>
@@ -318,7 +325,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.1.5"></script>
-    <script src="app.js?v=1.1.5"></script>
+    <script src="scraper.js?v=1.1.6"></script>
+    <script src="app.js?v=1.1.6"></script>
 </body>
 </html>

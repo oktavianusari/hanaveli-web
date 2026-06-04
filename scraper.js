@@ -177,7 +177,7 @@ const StockScraper = {
 
         // Apply offline mock fallbacks with accurate prices provided by the user
         const MOCK_STOCKS = {
-            "BBCA.JK": { symbol: "BBCA.JK", price: 5525, changePercent: -5.15, prevClose: 5825, currency: "IDR", name: "Bank Central Asia Tbk." },
+            "BBCA.JK": { symbol: "BBCA.JK", price: 5425, changePercent: -5.15, prevClose: 5825, currency: "IDR", name: "Bank Central Asia Tbk." },
             "BBNI.JK": { symbol: "BBNI.JK", price: 4780, changePercent: 1.27, prevClose: 4720, currency: "IDR", name: "Bank Negara Indonesia Tbk." },
             "GOOG": { symbol: "GOOG", price: 358.39, changePercent: -3.81, prevClose: 372.58, currency: "USD", name: "Alphabet Inc." },
             "MSFT": { symbol: "MSFT", price: 441.31, changePercent: 0.85, prevClose: 437.58, currency: "USD", name: "Microsoft Corporation" },

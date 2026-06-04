@@ -10,7 +10,22 @@ const ALL_CURRENCIES = [
 ];
 
 const DEFAULT_STOCKS = ["BBCA.JK", "BBNI.JK", "GOOG", "MSFT", "AAPL", "NVDA", "WDC"];
-const ALL_STOCKS = ["BBCA.JK", "BBNI.JK", "GOOG", "MSFT", "AAPL", "NVDA", "WDC", "SNDK"];
+const BASE_STOCKS = ["BBCA.JK", "BBNI.JK", "GOOG", "MSFT", "AAPL", "NVDA", "WDC", "SNDK"];
+function getAllStocks() {
+    const list = new Set(BASE_STOCKS);
+    if (state && state.monitoredStocks) {
+        state.monitoredStocks.forEach(s => list.add(s.toUpperCase()));
+    }
+    if (state && state.transactions) {
+        state.transactions.forEach(t => {
+            const sym = t.currency.toUpperCase();
+            if (!ALL_CURRENCIES.includes(sym)) {
+                list.add(sym);
+            }
+        });
+    }
+    return Array.from(list);
+}
 
 const STOCK_NAMES = {
     "BBCA.JK": "Bank Central Asia Tbk.",
@@ -183,7 +198,7 @@ function getFlagHtml(code) {
 
 function getAssetFlagHtml(code) {
     const codeUpper = code.toUpperCase();
-    if (ALL_STOCKS.includes(codeUpper)) {
+    if (getAllStocks().includes(codeUpper)) {
         return getStockFlagHtml(codeUpper);
     }
     return getFlagHtml(codeUpper);
@@ -441,7 +456,7 @@ function calculateStockPortfolio() {
 
     sortedTrx.forEach(t => {
         const symUpper = t.currency.toUpperCase();
-        if (ALL_STOCKS.includes(symUpper)) {
+        if (getAllStocks().includes(symUpper)) {
             if (!data[symUpper]) {
                 const info = state.stockRates[symUpper] || { price: 0, currency: symUpper.endsWith(".JK") ? "IDR" : "USD", name: STOCK_NAMES[symUpper] || symUpper };
                 data[symUpper] = {
@@ -1059,15 +1074,12 @@ document.getElementById("btn-add-currency-confirm").onclick = () => {
 // Add Stock Dialog
 document.getElementById("btn-add-stock-trigger").onclick = () => {
     const select = document.getElementById("add-stock-select");
+    const input = document.getElementById("add-stock-input");
+    if (input) input.value = "";
     if (!select) return;
     select.innerHTML = "";
 
-    const available = ALL_STOCKS.filter(s => !state.monitoredStocks.includes(s));
-    if (available.length === 0) {
-        alert("Semua saham sudah dimonitor!");
-        return;
-    }
-
+    const available = getAllStocks().filter(s => !state.monitoredStocks.includes(s));
     available.forEach(s => {
         const opt = document.createElement("option");
         opt.value = s;
@@ -1080,14 +1092,28 @@ document.getElementById("btn-add-stock-trigger").onclick = () => {
 };
 
 document.getElementById("btn-add-stock-cancel").onclick = hideModal;
-document.getElementById("btn-add-stock-confirm").onclick = () => {
-    const val = document.getElementById("add-stock-select").value;
-    if (val && !state.monitoredStocks.includes(val)) {
-        state.monitoredStocks.push(val);
-        saveState();
-        renderStockTab();
+document.getElementById("btn-add-stock-confirm").onclick = async () => {
+    const inputVal = document.getElementById("add-stock-input")?.value?.trim()?.toUpperCase();
+    const selectVal = document.getElementById("add-stock-select")?.value;
+    
+    const val = inputVal || selectVal;
+    if (!val) {
+        alert("Mohon masukkan kode saham kustom atau pilih saham terpopuler!");
+        return;
     }
+
+    if (state.monitoredStocks.includes(val)) {
+        alert(`Saham ${val} sudah ada di daftar monitor!`);
+        return;
+    }
+
+    state.monitoredStocks.push(val);
+    saveState();
+    renderStockTab();
     hideModal();
+    
+    // Dynamically sync rates for the newly added custom stock
+    await syncRates();
 };
 
 // Transaction Modal
@@ -1115,7 +1141,7 @@ function openTransactionModal(trx = null) {
 
     const optGroupStocks = document.createElement("optgroup");
     optGroupStocks.label = "Saham (Indonesia & US)";
-    ALL_STOCKS.forEach(s => {
+    getAllStocks().forEach(s => {
         const opt = document.createElement("option");
         opt.value = s;
         const flag = s.endsWith(".JK") ? "🇮🇩" : "🇺🇸";
@@ -1126,7 +1152,7 @@ function openTransactionModal(trx = null) {
 
     function getAssetPrice(code) {
         const codeUpper = code.toUpperCase();
-        if (ALL_STOCKS.includes(codeUpper)) {
+        if (getAllStocks().includes(codeUpper)) {
             const info = state.stockRates[codeUpper];
             return info ? info.price : 0;
         }
