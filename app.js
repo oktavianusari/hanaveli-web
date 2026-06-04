@@ -927,7 +927,7 @@ function applyTheme() {
         pref = isDaytime ? (state.settings.dayTheme || "light") : (state.settings.nightTheme || "dark");
     }
 
-    if (["dark", "light", "sunset", "zen", "vivaldi"].includes(pref)) {
+    if (["dark", "light", "sunset", "zen", "vivaldi", "light2"].includes(pref)) {
         body.setAttribute("data-theme", pref);
     } else if (pref === "system") {
         const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

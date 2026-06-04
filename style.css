@@ -87,6 +87,23 @@
     --red-pill-bg: rgba(231, 76, 60, 0.15);
 }
 
+/* Terang 2 Theme (Light 2) */
+[data-theme="light2"] {
+    --primary-color: #386A20;
+    --primary-rgb: 56, 106, 32;
+    --secondary-color: #D7E8CD;
+    --text-color: #1A1C18;
+    --bg-color: #edecf2;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 8px 32px 0 rgba(140, 160, 130, 0.15);
+    
+    --green-up: #2E7D32;
+    --red-down: #C62828;
+    --green-pill-bg: #E8F5E9;
+    --red-pill-bg: #FFEBEE;
+}
+
 /* Base Styles */
 * {
     box-sizing: border-box;
