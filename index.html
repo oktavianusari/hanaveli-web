@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.7">
+    <link rel="stylesheet" href="style.css?v=1.0.8">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -169,8 +169,26 @@
                             <option value="sunset">Sunset Forest (Vivaldi)</option>
                             <option value="zen">Zen (Vivaldi)</option>
                             <option value="vivaldi">Vivaldi Red</option>
+                            <option value="auto-time">Jadwal Otomatis (Siang/Malam)</option>
                             <option value="custom">Kustomisasi Warna</option>
                         </select>
+                    </div>
+                    <div id="auto-time-settings" class="custom-color-pickers hidden" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 12px;">
+                        <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding-bottom: 0; margin-bottom: 4px;">
+                            <label for="set-day-theme">Tema Siang (06:00 - 18:00)</label>
+                            <select id="set-day-theme" class="form-control" style="width: 160px; height: 36px; padding: 4px 8px;">
+                                <option value="light">Terang</option>
+                                <option value="zen">Zen (Vivaldi)</option>
+                                <option value="vivaldi">Vivaldi Red</option>
+                            </select>
+                        </div>
+                        <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding-bottom: 0;">
+                            <label for="set-night-theme">Tema Malam (18:00 - 06:00)</label>
+                            <select id="set-night-theme" class="form-control" style="width: 160px; height: 36px; padding: 4px 8px;">
+                                <option value="dark">Gelap</option>
+                                <option value="sunset">Sunset Forest (Vivaldi)</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="custom-color-pickers" class="custom-color-pickers hidden">
                         <div class="picker-row">
@@ -274,7 +292,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.0.7"></script>
-    <script src="app.js?v=1.0.7"></script>
+    <script src="scraper.js?v=1.0.8"></script>
+    <script src="app.js?v=1.0.8"></script>
 </body>
 </html>

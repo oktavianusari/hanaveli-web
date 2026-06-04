@@ -202,6 +202,12 @@ function loadState() {
             if (!state.baseStockRatesToday) {
                 state.baseStockRatesToday = {};
             }
+            if (!state.settings.dayTheme) {
+                state.settings.dayTheme = "light";
+            }
+            if (!state.settings.nightTheme) {
+                state.settings.nightTheme = "dark";
+            }
         } else {
             // Seed defaults
             state.monitored = [...DEFAULT_MONITORED];
@@ -213,6 +219,8 @@ function loadState() {
                 emasRateDirection: "jual",
                 syncInterval: 15,
                 themePreference: "system",
+                dayTheme: "light",
+                nightTheme: "dark",
                 customColors: { primary: "#386A20", secondary: "#D7E8CD", text: "#1A1C18" },
                 language: "system"
             };
@@ -727,6 +735,10 @@ function renderSettingsTab() {
     document.getElementById("set-theme").value = state.settings.themePreference;
     document.getElementById("set-lang").value = state.settings.language;
 
+    // Populate day/night inputs
+    document.getElementById("set-day-theme").value = state.settings.dayTheme || "light";
+    document.getElementById("set-night-theme").value = state.settings.nightTheme || "dark";
+
     // Toggle Pickers
     if (state.settings.themePreference === "custom") {
         document.getElementById("custom-color-pickers").classList.remove("hidden");
@@ -736,11 +748,17 @@ function renderSettingsTab() {
     } else {
         document.getElementById("custom-color-pickers").classList.add("hidden");
     }
+
+    // Toggle Auto Time Settings
+    if (state.settings.themePreference === "auto-time") {
+        document.getElementById("auto-time-settings").classList.remove("hidden");
+    } else {
+        document.getElementById("auto-time-settings").classList.add("hidden");
+    }
 }
 
-// App Settings & Theme Coordination
 function applyTheme() {
-    const pref = state.settings.themePreference;
+    let pref = state.settings.themePreference;
     const body = document.body;
 
     // Reset themes
@@ -748,6 +766,12 @@ function applyTheme() {
     document.documentElement.style.removeProperty("--primary-color");
     document.documentElement.style.removeProperty("--secondary-color");
     document.documentElement.style.removeProperty("--text-color");
+
+    if (pref === "auto-time") {
+        const hour = new Date().getHours();
+        const isDaytime = hour >= 6 && hour < 18; // 6 AM to 6 PM
+        pref = isDaytime ? (state.settings.dayTheme || "light") : (state.settings.nightTheme || "dark");
+    }
 
     if (["dark", "light", "sunset", "zen", "vivaldi"].includes(pref)) {
         body.setAttribute("data-theme", pref);
@@ -1166,6 +1190,18 @@ document.getElementById("set-theme").onchange = (e) => {
     applyTheme();
 };
 
+document.getElementById("set-day-theme").onchange = (e) => {
+    state.settings.dayTheme = e.target.value;
+    saveState();
+    applyTheme();
+};
+
+document.getElementById("set-night-theme").onchange = (e) => {
+    state.settings.nightTheme = e.target.value;
+    saveState();
+    applyTheme();
+};
+
 document.getElementById("set-sync-interval").onchange = (e) => {
     state.settings.syncInterval = parseInt(e.target.value);
     saveState();
@@ -1235,4 +1271,11 @@ window.onload = () => {
             applyTheme();
         }
     });
+
+    // Check and update theme every minute for auto-time transition
+    setInterval(() => {
+        if (state.settings.themePreference === "auto-time") {
+            applyTheme();
+        }
+    }, 60000);
 };
