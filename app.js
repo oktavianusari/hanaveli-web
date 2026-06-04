@@ -771,8 +771,8 @@ function renderTotalTab() {
     let totalPortfolioValue = 0;
 
     ownedCurrencies.forEach(c => {
-        const totalCost = c.balance * c.averageBuyPrice;
-        const currentValue = c.balance * c.currentRate;
+        const totalCost = Math.round(c.balance * c.averageBuyPrice);
+        const currentValue = Math.round(c.balance * c.currentRate);
         totalPortfolioCost += totalCost;
         totalPortfolioValue += currentValue;
     });
@@ -782,8 +782,8 @@ function renderTotalTab() {
         const totalCost = s.balance * s.averageBuyPrice;
         const currentValue = s.balance * s.currentRate;
         
-        const costIdr = isUsd ? totalCost * usdToIdr : totalCost;
-        const valueIdr = isUsd ? currentValue * usdToIdr : currentValue;
+        const costIdr = Math.round(isUsd ? totalCost * usdToIdr : totalCost);
+        const valueIdr = Math.round(isUsd ? currentValue * usdToIdr : currentValue);
         
         totalPortfolioCost += costIdr;
         totalPortfolioValue += valueIdr;
@@ -799,8 +799,8 @@ function renderTotalTab() {
     } else {
         // Render owned Currencies
         ownedCurrencies.forEach(c => {
-            const rupiahValue = c.balance * c.currentRate;
-            grandTotal += rupiahValue;
+            const rupiahValue = Math.round(c.balance * c.currentRate);
+            grandTotal += 0; // already accumulated in totalPortfolioValue/grandTotal above
 
             const displayBalance = privacyHidden ? "-----" : formatNumber(c.balance, 4);
             const displayAvg = privacyHidden ? "Rp -----" : `Rp ${formatNumber(c.averageBuyPrice, 2)}`;
@@ -832,8 +832,7 @@ function renderTotalTab() {
         // Render owned Stocks
         ownedStocks.forEach(s => {
             const isUsd = s.currency === "USD";
-            const rupiahValue = isUsd ? (s.balance * s.currentRate * usdToIdr) : (s.balance * s.currentRate);
-            grandTotal += rupiahValue;
+            const rupiahValue = Math.round(isUsd ? (s.balance * s.currentRate * usdToIdr) : (s.balance * s.currentRate));
 
             const displayBalance = privacyHidden ? "-----" : formatNumber(s.balance, 4);
             const displayAvg = privacyHidden ? (isUsd ? "$ -----" : "Rp -----") : (isUsd ? `$ ${formatNumber(s.averageBuyPrice, 2)}` : `Rp ${formatNumber(s.averageBuyPrice, 2)}`);
