@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.6">
+    <link rel="stylesheet" href="style.css?v=1.0.7">
 </head>
 <body>
     <div id="app-container" class="app-container">
@@ -23,21 +23,21 @@
             </div>
             <div class="header-actions">
                 <button id="btn-refresh" class="btn-icon" title="Segarkan Kurs">
-                    <span class="icon">🔄</span>
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                 </button>
                 <button id="btn-widget-toggle" class="btn-icon" title="Mode Widget">
-                    <span class="icon">📱</span>
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                 </button>
             </div>
         </header>
 
         <!-- Navigation Tabs -->
         <nav class="app-nav" id="app-nav">
-            <button class="nav-tab active" data-tab="monitor">📊 Monitor</button>
-            <button class="nav-tab" data-tab="saham">📈 Saham</button>
-            <button class="nav-tab" data-tab="history">📝 Riwayat</button>
-            <button class="nav-tab" data-tab="total">💰 Total</button>
-            <button class="nav-tab" data-tab="settings">⚙️ Setelan</button>
+            <button class="nav-tab active" data-tab="monitor"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>Monitor</button>
+            <button class="nav-tab" data-tab="saham"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>Saham</button>
+            <button class="nav-tab" data-tab="history"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Riwayat</button>
+            <button class="nav-tab" data-tab="total"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>Total</button>
+            <button class="nav-tab" data-tab="settings"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Setelan</button>
         </nav>
 
         <!-- Main Content Area -->
@@ -45,14 +45,19 @@
             <!-- Monitor Tab -->
             <section id="tab-monitor" class="tab-pane active">
                 <div class="update-banner" id="update-banner">
-                    <div class="banner-item"><span class="lbl">BCA:</span> <span id="bca-time">-</span></div>
-                    <div class="banner-item"><span class="lbl">IndoGold:</span> <span id="indogold-time">-</span></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <div class="banner-item"><span class="lbl">BCA:</span> <span id="bca-time">-</span></div>
+                        <div class="banner-item"><span class="lbl">IndoGold:</span> <span id="indogold-time">-</span></div>
+                    </div>
+                    <button class="btn-sync-widget" title="Segarkan Data">
+                        <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
                 </div>
                 <div id="currency-list" class="currency-list">
                     <!-- Dynamic currency cards -->
                 </div>
                 <button id="btn-add-currency-trigger" class="fab" title="Tambah Mata Uang">
-                    <span class="icon">➕</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
             </section>
 
@@ -60,23 +65,26 @@
             <section id="tab-saham" class="tab-pane">
                 <div class="update-banner" id="stock-update-banner">
                     <div class="banner-item"><span class="lbl">Pasar Saham:</span> <span id="stocks-time">Live dari Yahoo Finance</span></div>
+                    <button class="btn-sync-widget" title="Segarkan Data">
+                        <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-svg"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
                 </div>
                 <div id="stock-list" class="currency-list">
                     <!-- Dynamic stock cards -->
                 </div>
                 <button id="btn-add-stock-trigger" class="fab" title="Tambah Saham">
-                    <span class="icon">➕</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
             </section>
 
             <!-- History Tab -->
             <section id="tab-history" class="tab-pane">
                 <div class="action-row">
-                    <button id="btn-add-trx-trigger" class="btn btn-primary">➕ Transaksi Baru</button>
+                    <button id="btn-add-trx-trigger" class="btn btn-primary"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Transaksi Baru</button>
                     <div class="backup-actions">
-                        <button id="btn-export" class="btn btn-secondary">📤 Ekspor JSON</button>
+                        <button id="btn-export" class="btn btn-secondary"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>Ekspor JSON</button>
                         <label for="import-file" class="btn btn-secondary" style="cursor: pointer;">
-                            📥 Impor JSON
+                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Impor JSON
                             <input type="file" id="import-file" accept=".json" style="display: none;">
                         </label>
                     </div>
@@ -266,7 +274,7 @@
     </div>
 
     <!-- App JavaScript -->
-    <script src="scraper.js?v=1.0.6"></script>
-    <script src="app.js?v=1.0.6"></script>
+    <script src="scraper.js?v=1.0.7"></script>
+    <script src="app.js?v=1.0.7"></script>
 </body>
 </html>

@@ -237,6 +237,7 @@ body {
 .update-banner {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 11px;
     opacity: 0.6;
     margin-bottom: 16px;
@@ -251,6 +252,34 @@ body {
 
 .banner-item .lbl {
     font-weight: 600;
+}
+
+.btn-sync-widget {
+    background: none;
+    border: none;
+    padding: 4px;
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.btn-sync-widget:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .btn-sync-widget:hover,
+[data-theme="sunset"] .btn-sync-widget:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.rotating {
+    animation: rotate 1.2s linear infinite;
 }
 
 /* Currency List & Cards */
@@ -362,10 +391,12 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 14px;
     opacity: 0.5;
     transition: var(--transition);
     padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card-actions-menu button:hover {

@@ -448,9 +448,9 @@ function renderMonitorTab() {
             <div class="card-right">
                 <span class="card-change-pill ${changeClass}">${changeSign}${formatNumber(c.dailyChangePercent, 2)}%</span>
                 <div class="card-actions-menu">
-                    <button class="btn-move-up" title="Pindah Ke Atas">▲</button>
-                    <button class="btn-move-down" title="Pindah Ke Bawah">▼</button>
-                    <button class="btn-delete-monitored" style="color:var(--red-down);" title="Hapus">✖</button>
+                    <button class="btn-move-up" title="Pindah Ke Atas"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                    <button class="btn-move-down" title="Pindah Ke Bawah"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                    <button class="btn-delete-monitored" style="color:var(--red-down);" title="Hapus"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
             </div>
         `;
@@ -550,9 +550,9 @@ function renderStockTab() {
             <div class="card-right">
                 <span class="card-change-pill ${changeClass}">${changeSign}${formatNumber(s.dailyChangePercent, 2)}%</span>
                 <div class="card-actions-menu">
-                    <button class="btn-stock-move-up" title="Pindah Ke Atas">▲</button>
-                    <button class="btn-stock-move-down" title="Pindah Ke Bawah">▼</button>
-                    <button class="btn-delete-stock" style="color:var(--red-down);" title="Hapus">✖</button>
+                    <button class="btn-stock-move-up" title="Pindah Ke Atas"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg></button>
+                    <button class="btn-stock-move-down" title="Pindah Ke Bawah"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                    <button class="btn-delete-stock" style="color:var(--red-down);" title="Hapus"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
             </div>
         `;
@@ -771,6 +771,11 @@ function applyTheme() {
 async function syncRates() {
     const status = document.getElementById("sync-status");
     status.innerText = getTranslation("syncing");
+    
+    // Add rotating class to sync icons
+    document.querySelectorAll(".btn-sync-widget svg, #btn-refresh svg").forEach(svg => {
+        svg.classList.add("rotating");
+    });
 
     try {
         const todayStr = new Date().toISOString().split("T")[0].replace(/-/g, "");
@@ -813,6 +818,11 @@ async function syncRates() {
     } catch (e) {
         console.error("Sync error:", e);
         status.innerText = getTranslation("sync_failed");
+    } finally {
+        // Remove rotating class from sync icons
+        document.querySelectorAll(".btn-sync-widget svg, #btn-refresh svg").forEach(svg => {
+            svg.classList.remove("rotating");
+        });
     }
 }
 
@@ -1182,6 +1192,9 @@ bindColorPicker("color-text", "text");
 
 // Refresh button trigger
 document.getElementById("btn-refresh").onclick = syncRates;
+document.querySelectorAll(".btn-sync-widget").forEach(btn => {
+    btn.onclick = syncRates;
+});
 
 let syncIntervalId = null;
 function startAutoSync() {
