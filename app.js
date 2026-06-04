@@ -904,7 +904,7 @@ function renderSettingsTab() {
     }
 
     // Toggle Auto Time Settings
-    if (state.settings.themePreference === "auto-time") {
+    if (state.settings.themePreference === "auto-time" || state.settings.themePreference === "system") {
         document.getElementById("auto-time-settings").classList.remove("hidden");
     } else {
         document.getElementById("auto-time-settings").classList.add("hidden");
@@ -925,17 +925,13 @@ function applyTheme() {
         const hour = new Date().getHours();
         const isDaytime = hour >= 6 && hour < 18; // 6 AM to 6 PM
         pref = isDaytime ? (state.settings.dayTheme || "light") : (state.settings.nightTheme || "dark");
+    } else if (pref === "system") {
+        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        pref = isSystemDark ? (state.settings.nightTheme || "dark") : (state.settings.dayTheme || "light");
     }
 
     if (["dark", "light", "sunset", "zen", "vivaldi", "light2"].includes(pref)) {
         body.setAttribute("data-theme", pref);
-    } else if (pref === "system") {
-        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (isSystemDark) {
-            body.setAttribute("data-theme", "dark");
-        } else {
-            body.setAttribute("data-theme", "light");
-        }
     } else if (pref === "custom") {
         // Set dynamic colors
         const colors = state.settings.customColors;
@@ -1326,7 +1322,7 @@ document.getElementById("set-theme").onchange = (e) => {
     } else {
         document.getElementById("custom-color-pickers").classList.add("hidden");
     }
-    if (val === "auto-time") {
+    if (val === "auto-time" || val === "system") {
         document.getElementById("auto-time-settings").classList.remove("hidden");
     } else {
         document.getElementById("auto-time-settings").classList.add("hidden");
