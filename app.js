@@ -548,7 +548,7 @@ function renderMonitorTab() {
                     </span>
                 </div>
             </div>
-            <div class="card-right" style="display:flex; align-items:center; gap:8px;">
+            <div class="card-right" style="display:flex; flex-direction:row !important; align-items:center; gap:8px;">
                 ${trxGainHtml}
                 <span class="card-change-pill ${changeClass}">${changeSign}${formatNumber(c.dailyChangePercent, 2)}%</span>
                 <div class="card-actions-menu">
