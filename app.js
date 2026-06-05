@@ -936,16 +936,12 @@ function applyTheme() {
     document.documentElement.style.removeProperty("--secondary-color");
     document.documentElement.style.removeProperty("--text-color");
 
-    if (pref === "auto-time") {
-        const hour = new Date().getHours();
-        const isDaytime = hour >= 6 && hour < 18; // 6 AM to 6 PM
-        pref = isDaytime ? (state.settings.dayTheme || "light") : (state.settings.nightTheme || "dark");
-    } else if (pref === "system") {
+    if (pref === "auto-time" || pref === "system") {
         const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         pref = isSystemDark ? (state.settings.nightTheme || "dark") : (state.settings.dayTheme || "light");
     }
 
-    if (["dark", "light", "sunset", "zen", "vivaldi", "light2"].includes(pref)) {
+    if (["dark", "light", "sunset", "vivaldi-sunset", "zen", "vivaldi", "light2"].includes(pref)) {
         body.setAttribute("data-theme", pref);
     } else if (pref === "custom") {
         // Set dynamic colors
@@ -1441,7 +1437,7 @@ window.onload = () => {
 
     // Setup media query listener for system themes
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-        if (state.settings.themePreference === "system") {
+        if (state.settings.themePreference === "system" || state.settings.themePreference === "auto-time") {
             applyTheme();
         }
     });

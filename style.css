@@ -53,6 +53,98 @@
     --red-pill-bg: rgba(255, 118, 117, 0.2);
 }
 
+/* Vivaldi Sunset Forest Theme (Precisely styled from bmkg-widget) */
+[data-theme="vivaldi-sunset"] {
+    --primary-color: #4b5585; /* Active tab/button background */
+    --primary-rgb: 75, 85, 133;
+    --secondary-color: rgba(255, 255, 255, 0.12);
+    --text-color: #ffffff;
+    --bg-color: #3b4676; /* Dominant slate-violet color */
+    --card-bg: transparent; /* Seamless transparent items */
+    --card-border: transparent;
+    --shadow: none;
+    
+    --green-up: #81C784;
+    --red-down: #E57373;
+    --green-pill-bg: rgba(129, 199, 132, 0.15);
+    --red-pill-bg: rgba(229, 115, 115, 0.15);
+}
+
+[data-theme="vivaldi-sunset"] .app-container {
+    background: linear-gradient(180deg, #3e497a 0%, #252d54 100%) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+[data-theme="vivaldi-sunset"] body {
+    background: #252d54 !important;
+}
+
+[data-theme="vivaldi-sunset"] .nav-tab {
+    color: #cad4f5;
+    opacity: 1;
+}
+
+[data-theme="vivaldi-sunset"] .nav-tab.active {
+    background: #4b5585 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="vivaldi-sunset"] .app-nav {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="vivaldi-sunset"] .currency-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-theme="vivaldi-sunset"] .currency-card:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    transform: translateY(-2px);
+}
+
+[data-theme="vivaldi-sunset"] .update-banner {
+    background: rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="vivaldi-sunset"] .banner-item .lbl,
+[data-theme="vivaldi-sunset"] .banner-item span {
+    color: #cad4f5 !important;
+}
+
+[data-theme="vivaldi-sunset"] .btn-sync-widget,
+[data-theme="vivaldi-sunset"] .btn-action-widget {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="vivaldi-sunset"] .btn-sync-widget:hover,
+[data-theme="vivaldi-sunset"] .btn-action-widget:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="vivaldi-sunset"] .card-title,
+[data-theme="vivaldi-sunset"] .card-title span {
+    color: #ffffff !important;
+}
+
+[data-theme="vivaldi-sunset"] .card-drag-handle {
+    color: #cad4f5;
+}
+
+[data-theme="vivaldi-sunset"] .card-actions-menu button {
+    color: #cad4f5;
+}
+
+[data-theme="vivaldi-sunset"] .asset-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
 /* Zen Theme (Vivaldi Match) */
 [data-theme="zen"] {
     --primary-color: #57606f;
